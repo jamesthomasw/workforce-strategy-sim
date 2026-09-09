@@ -447,7 +447,11 @@ function normalizeTeamCodes(sessionState){
     sessionState.ui = { route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' };
   }
   if(!sessionState.phaseStatus) sessionState.phaseStatus = { evp:'locked', marketplace:'locked' };
-  if(!sessionState.evpControl) sessionState.evpControl = freshState().evpControl;
+  const defaultEVPControl = freshState().evpControl;
+  sessionState.evpControl = Object.assign(defaultEVPControl, sessionState.evpControl || {});
+  sessionState.evpControl.presentationOrder = Array.isArray(sessionState.evpControl.presentationOrder)
+    ? sessionState.evpControl.presentationOrder
+    : Object.keys(sessionState.evpControl.presentationOrder || {}).map(function(key){ return sessionState.evpControl.presentationOrder[key]; });
   sessionState.teams = Array.isArray(sessionState.teams) ? sessionState.teams : Object.keys(sessionState.teams || {}).map(function(key){ return sessionState.teams[key]; });
   sessionState.talents = Array.isArray(sessionState.talents) ? sessionState.talents : Object.keys(sessionState.talents || {}).map(function(key){ return sessionState.talents[key]; });
   sessionState.rounds = Array.isArray(sessionState.rounds) ? sessionState.rounds : Object.keys(sessionState.rounds || {}).map(function(key){ return sessionState.rounds[key]; });
@@ -455,6 +459,8 @@ function normalizeTeamCodes(sessionState){
   sessionState.events = Array.isArray(sessionState.events) ? sessionState.events : Object.keys(sessionState.events || {}).map(function(key){ return sessionState.events[key]; });
   sessionState.logs = Array.isArray(sessionState.logs) ? sessionState.logs : Object.keys(sessionState.logs || {}).map(function(key){ return sessionState.logs[key]; });
   sessionState.teams.forEach(function(team){
+    team.roster = team.roster || [];
+    team.evpJudgeTotals = team.evpJudgeTotals || [];
     team.roster = Array.isArray(team.roster) ? team.roster : Object.keys(team.roster || {}).map(function(key){ return team.roster[key]; });
     team.evpJudgeTotals = Array.isArray(team.evpJudgeTotals) ? team.evpJudgeTotals : Object.keys(team.evpJudgeTotals || {}).map(function(key){ return team.evpJudgeTotals[key]; });
   });
