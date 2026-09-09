@@ -84,15 +84,14 @@ p{margin:0;}
 .timer-box.warn .value{color:var(--amber);}
 .timer-box.danger .value{color:var(--red);}
 .timer-box.off .value{color:var(--text-3);}
-.picker-wheel{width:190px;height:190px;border-radius:50%;border:5px solid var(--g-800);box-shadow:0 0 0 1px var(--line),inset 0 0 0 1px rgba(255,255,255,.12);margin:10px auto;position:relative;}
-.picker-wheel::after{content:'';position:absolute;left:50%;top:50%;width:22px;height:22px;border-radius:50%;background:var(--g-900);border:2px solid var(--amber);transform:translate(-50%,-50%);}
-.picker-pointer{width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:18px solid var(--amber);position:absolute;left:calc(50% - 10px);top:-12px;z-index:1;}
 
 /* ---------- panel / card chrome ---------- */
 .panel{
   position:relative;background:var(--g-900);border:1px solid var(--line-soft);border-radius:var(--radius);
   padding:16px;
 }
+.phase-panel{margin-bottom:18px;}
+.phase-control-stack{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:16px;}
 .panel::before,.panel::after{
   content:"";position:absolute;width:9px;height:9px;top:-1px;
   border-top:1px solid var(--amber);pointer-events:none;
@@ -126,6 +125,7 @@ p{margin:0;}
 .btn-cyan{background:var(--cyan-soft);border-color:#2E5A63;color:var(--cyan);}
 .btn-red{background:var(--red-soft);border-color:#6E332C;color:var(--red);}
 .btn-green{background:var(--green-soft);border-color:#3A5F46;color:var(--green);}
+.btn-phase-action{margin-top:16px;padding:11px 18px;}
 .btn-ghost{background:transparent;border-color:var(--line-soft);color:var(--text-2);}
 .btn-sm{padding:5px 10px;font-size:12px;}
 .btn-block{width:100%;}
@@ -188,6 +188,11 @@ tr:last-child td{border-bottom:none;}
 .skillbar .track{width:100%;height:22px;background:var(--g-800);border:1px solid var(--line-soft);position:relative;border-radius:2px;overflow:hidden;}
 .skillbar .fill{position:absolute;bottom:0;left:0;right:0;background:var(--cyan);}
 .skillbar .val{font-size:9px;font-family:var(--font-m);color:var(--text-2);}
+.area-key{display:flex;flex-wrap:wrap;gap:10px;}
+.area-key-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line-soft);border-radius:3px;background:var(--g-850);font-size:12px;}
+.area-key-label{color:var(--amber);font-family:var(--font-m);font-weight:700;font-size:13px;}
+.recruitment-warning{padding:12px 14px;border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:var(--radius);background:var(--amber-soft);color:var(--text-1);font-size:13px;line-height:1.45;}
+.recruitment-warning strong{color:var(--amber);}
 
 /* ---------- planning board ---------- */
 .tray{
@@ -296,7 +301,7 @@ textarea{resize:vertical;min-height:120px;}
 const STORAGE_KEY = 'wfsim_state_v2';
 const LOCAL_UI_KEY = 'wfsim_local_ui_v1';
 const SHARED_SESSION_ID = 'default';
-const TEAM_CODES = ['T1-ALPHA','T2-BRAVO','T3-CHARLIE','T4-DELTA','T5-ECHO','T6-FOXTROT','T7-GOLF','T8-HOTEL'];
+const TEAM_CODES = ['T1-ALPHA','T2-BRAVO','T3-CHARLIE','T4-DELTA','T5-ECHO','T6-FOXTROT','T7-GOLF','T8-HOTEL','T9-INDIA','T10-JULIET'];
 // Replace these values with the Firebase Web App config for the deployment.
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyBw5cJ0oOccWngdScOgo1-cvsbyLncKuoA',
@@ -308,7 +313,7 @@ const FIREBASE_CONFIG = {
   appId: '1:761657063147:web:214381d762f177edbb30ae'
 };
 const AREAS = ['A','B','C','D','E'];
-const AREA_NAMES = {A:'Screening',B:'Digester',C:'Washing',D:'Bleaching',E:'HDT'};
+const AREA_NAMES = {A:'Chip Screening',B:'Digester',C:'Washing',D:'Bleaching',E:'HDT'};
 const FACILITATOR_KEY = 'FACILITATOR';
 
 /* ---------------------------- deterministic RNG ---------------------------- */
@@ -340,7 +345,7 @@ function buildTalentPool(){
   const talents = [];
   // Gold talent is consistently excellent: every work area is at least 80,
   // with a narrow spread, and higher cost yields a higher overall profile.
-  for(let i=0;i<10;i++){
+  for(let i=0;i<12;i++){
     const cost = ri(72,98);
     const base = 82 + Math.round((cost-72)*0.32); // 82–90, tied to cost
     const skills = {};
@@ -352,7 +357,7 @@ function buildTalentPool(){
   }
   // Silver talent scales with cost. A talent may have one strong specialty,
   // but no Silver profile can overlap Gold's consistently high capability.
-  for(let i=0;i<34;i++){
+  for(let i=0;i<44;i++){
     const cost = ri(15,55);
     const base = 24 + Math.round((cost-15)*0.85); // 24–58, tied to cost
     const skills = {};
@@ -362,15 +367,15 @@ function buildTalentPool(){
       skills[specialty] = Math.min(79, skills[specialty]+ri(18,28));
     }
     talents.push({
-      id: 'tal_'+(i+1+10), name: genName(used), tier:'Silver',
+      id: 'tal_'+(i+1+12), name: genName(used), tier:'Silver',
       cost, skills, learning:0, recruitedBy:null, active:true, history:[]
     });
   }
   return talents;
 }
 
-const TEAM_COLORS = ['#E8A33D','#4FB0C6','#5FA777','#D1574B','#B98CD9','#E0C34E','#6FA8DC','#E88BAE'];
-const MIN_TEAMS = 2, MAX_TEAMS = 8;
+const TEAM_COLORS = ['#E8A33D','#4FB0C6','#5FA777','#D1574B','#B98CD9','#E0C34E','#6FA8DC','#E88BAE','#C47A52','#7E9FCE'];
+const MIN_TEAMS = 6, MAX_TEAMS = 10;
 const MIN_PLAYERS_PER_TEAM = 1, MAX_PLAYERS_PER_TEAM = 6;
 const MIN_ROUNDS = 1, MAX_ROUNDS = 10;
 const MIN_JUDGES = 3, MAX_JUDGES = 5;
@@ -412,7 +417,7 @@ function freshState(numTeams, playersPerTeam, numRounds){
   }
   return {
     session:{ name:'Workforce Strategy Simulation', numRounds, evpMultiplier:3, numJudges:3, currentRound:0, numTeams, playersPerTeam },
-    evpControl:{ draftMinutes:20, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null },
+    evpControl:{ draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null },
     role: null, // {type:'facilitator'} | {type:'team', teamId}
     ui:{ route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' },
     phaseStatus: { evp:'locked', marketplace:'locked' },
@@ -446,9 +451,14 @@ function normalizeTeamCodes(sessionState){
   if(!sessionState.ui){
     sessionState.ui = { route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' };
   }
-  if(!sessionState.phaseStatus) sessionState.phaseStatus = { evp:'locked', marketplace:'locked' };
+  sessionState.phaseStatus = Object.assign({ evp:'locked', marketplace:'locked' }, sessionState.phaseStatus || {});
+  if(sessionState.phaseStatus.evp==='closed' && sessionState.phaseStatus.marketplace==='locked'){
+    sessionState.phaseStatus.marketplace = 'planning';
+  }
   const defaultEVPControl = freshState().evpControl;
   sessionState.evpControl = Object.assign(defaultEVPControl, sessionState.evpControl || {});
+  sessionState.evpControl.presentationMinutes = Math.max(1, Math.min(10, parseInt(sessionState.evpControl.presentationMinutes,10)||3));
+  sessionState.evpControl.planningMinutes = Math.max(1, Math.min(30, parseInt(sessionState.evpControl.planningMinutes,10)||5));
   sessionState.evpControl.presentationOrder = Array.isArray(sessionState.evpControl.presentationOrder)
     ? sessionState.evpControl.presentationOrder
     : Object.keys(sessionState.evpControl.presentationOrder || {}).map(function(key){ return sessionState.evpControl.presentationOrder[key]; });
@@ -547,7 +557,7 @@ function logAction(type, teamId, details){
 
 function evpControl(){
   if(!state.evpControl){
-    state.evpControl = { draftMinutes:20, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null };
+    state.evpControl = { draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null };
   }
   return state.evpControl;
 }
@@ -570,6 +580,14 @@ function liveTimerTick(){
     const display = document.getElementById('evpPresentationTimer');
     if(display) display.textContent = formatTimer(remaining);
     if(remaining===0){ control.presentationStatus='ended'; control.presentationEndsAt=null; changed=true; toast('Presentation time is up — hard stop.', 'warn'); }
+  }
+  if(control.planningStatus==='running'){
+    const remaining = timerRemaining(control.planningEndsAt);
+    const display = document.getElementById('marketplacePlanningTimer');
+    if(display) display.textContent = formatTimer(remaining);
+    const teamDisplay = document.getElementById('teamMarketplacePlanningTimer');
+    if(teamDisplay) teamDisplay.textContent = formatTimer(remaining);
+    if(remaining===0){ control.planningStatus='ended'; control.planningEndsAt=null; changed=true; toast('Marketplace planning time is up.', 'warn'); }
   }
   if(changed) persistAndRender();
 }
@@ -788,6 +806,18 @@ function setEVPDraftMinutes(value){
   control.draftMinutes = Math.max(1, Math.min(20, parseInt(value,10)||20));
   persistAndRender();
 }
+function setEVPPresentationMinutes(value){
+  const control = evpControl();
+  if(control.presentationStatus==='running'){ toast('End the active presentation before changing its duration.', 'warn'); render(); return; }
+  control.presentationMinutes = Math.max(1, Math.min(10, parseInt(value,10)||3));
+  persistAndRender();
+}
+function setMarketplacePlanningMinutes(value){
+  const control = evpControl();
+  if(control.planningStatus==='running'){ toast('End the active planning timer before changing its duration.', 'warn'); render(); return; }
+  control.planningMinutes = Math.max(1, Math.min(30, parseInt(value,10)||5));
+  persistAndRender();
+}
 function startEVPDraftTimer(){
   const control = evpControl();
   if(control.draftStatus==='ended'){ toast('EVP drafting time has already ended.', 'warn'); return; }
@@ -804,7 +834,7 @@ function endEVPDraftTimer(){
   logAction('TimerEnd', null, 'EVP drafting timer ended by facilitator');
   persistAndRender();
 }
-function spinPresentationWheel(){
+function randomizePresentationOrder(){
   const control = evpControl();
   const order = state.teams.map(t=>t.id);
   for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
@@ -817,12 +847,12 @@ function spinPresentationWheel(){
 }
 function startPresentationTimer(){
   const control = evpControl();
-  if(!control.presentationOrder.length){ toast('Spin the presentation picker first.', 'warn'); return; }
+  if(!control.presentationOrder.length){ toast('Randomize the presentation order first.', 'warn'); return; }
   if(control.presentationIndex>=control.presentationOrder.length){ toast('All team presentations are complete.', 'warn'); return; }
   control.presentationStatus = 'running';
-  control.presentationEndsAt = new Date(Date.now()+3*60000).toISOString();
+  control.presentationEndsAt = new Date(Date.now()+control.presentationMinutes*60000).toISOString();
   const team = state.teams.find(t=>t.id===control.presentationOrder[control.presentationIndex]);
-  logAction('TimerStart', team&&team.id, 'Three-minute EVP presentation timer started');
+  logAction('TimerStart', team&&team.id, control.presentationMinutes+'-minute EVP presentation timer started');
   persistAndRender();
 }
 function nextPresentationTeam(){
@@ -833,16 +863,14 @@ function nextPresentationTeam(){
   control.presentationIndex = Math.min(control.presentationIndex+1, control.presentationOrder.length);
   persistAndRender();
 }
-function renderPresentationWheel(){
+function renderPresentationOrder(){
   const control = evpControl();
   const ids = control.presentationOrder.length ? control.presentationOrder : state.teams.map(t=>t.id);
   const teams = ids.map(id=>state.teams.find(t=>t.id===id)).filter(Boolean);
-  const step = 100/Math.max(teams.length,1);
-  const gradient = teams.map((team,i)=>team.color+' '+(i*step)+'% '+((i+1)*step)+'%').join(',');
   const order = control.presentationOrder.length
     ? '<ol class="small" style="margin:10px 0 0;padding-left:20px;">'+teams.map((team,i)=>'<li '+(i===control.presentationIndex?'style="color:var(--amber);font-weight:700;"':'')+'>'+esc(team.name)+(i===control.presentationIndex?' — next':'')+'</li>').join('')+'</ol>'
-    : '<p class="dim small">Spin the wheel to publish a randomized presentation order to all teams.</p>';
-  return '<div style="position:relative;width:190px;margin:10px auto;"><div class="picker-pointer"></div><div class="picker-wheel" style="background:conic-gradient('+gradient+');"></div></div>'+order;
+    : '<p class="dim small">Randomize the order to publish a presentation sequence to all teams.</p>';
+  return order;
 }
 function closeEVPApplyScores(){
   state.teams.forEach(team=>{ team.evpScore = calculateEVPScore(team); });
@@ -850,8 +878,41 @@ function closeEVPApplyScores(){
   if(missing.length){ toast('Complete every judge rubric score for every team first.', 'warn'); return; }
   state.teams.forEach(t=>{ t.budget = computeStartingBudget(t.evpScore); });
   state.phaseStatus.evp = 'closed';
+  state.phaseStatus.marketplace = 'planning';
+  logAction('PhaseClose', null, 'EVP scored and budgets applied; Marketplace remains locked');
+  persistAndRender();
+}
+function startMarketplacePlanningTimer(){
+  const control = evpControl();
+  if(state.phaseStatus.marketplace!=='planning') return;
+  if(control.planningStatus==='running'){ return; }
+  if(control.planningStatus==='ended'){ toast('Marketplace planning time has already ended.', 'warn'); return; }
+  control.planningStatus = 'running';
+  control.planningEndsAt = new Date(Date.now()+control.planningMinutes*60000).toISOString();
+  logAction('TimerStart', null, 'Marketplace planning timer started for '+control.planningMinutes+' minutes');
+  persistAndRender();
+}
+function endMarketplacePlanningTimer(){
+  const control = evpControl();
+  if(control.planningStatus!=='running') return;
+  control.planningStatus = 'ended';
+  control.planningEndsAt = null;
+  logAction('TimerEnd', null, 'Marketplace planning timer ended early by facilitator');
+  persistAndRender();
+}
+function unlockMarketplace(){
+  if(state.phaseStatus.evp!=='closed'){
+    toast('Apply EVP scores before unlocking the Marketplace.', 'warn');
+    return;
+  }
+  if(state.phaseStatus.marketplace!=='planning') return;
+  const control = evpControl();
+  if(control.planningStatus!=='ended'){
+    toast('Let the Marketplace planning timer finish first.', 'warn');
+    return;
+  }
   state.phaseStatus.marketplace = 'open';
-  logAction('PhaseUnlock', null, 'EVP scored, budgets applied, Marketplace unlocked');
+  logAction('PhaseUnlock', null, 'Marketplace unlocked by facilitator');
   persistAndRender();
 }
 function closeMarketplace(){
@@ -1024,7 +1085,8 @@ function talentCardMarket(t, team){
   const goldFull = team.roster.some(id=>{const x=state.talents.find(tt=>tt.id===id); return x&&x.tier==='Gold';});
   const silverCount = team.roster.filter(id=>{const x=state.talents.find(tt=>tt.id===id); return x&&x.tier==='Silver';}).length;
   let disableReason = '';
-  if(taken) disableReason = 'Recruited';
+  if(state.phaseStatus.marketplace!=='open') disableReason = 'Recruitment not open';
+  else if(taken) disableReason = 'Recruited';
   else if(t.tier==='Gold' && goldFull) disableReason = 'Gold slot filled';
   else if(t.tier==='Silver' && silverCount>=4) disableReason = 'Silver slots filled';
   else if(t.cost > team.budget) disableReason = 'Over budget';
@@ -1033,7 +1095,7 @@ function talentCardMarket(t, team){
     +'<div class="talent-top"><div><div class="talent-name">'+esc(t.name)+'</div>'
     +'<span class="badge '+badgeClass+'">'+t.tier+'</span></div>'
     +'<div class="mono" style="text-align:right"><div style="font-size:15px;font-weight:700;">'+t.cost+'</div><div class="dimmer" style="font-size:9px;">COINS</div></div></div>'
-    +'<div class="skillbars">'+AREAS.map(a=>skillBar(AREA_NAMES[a],t.skills[a])).join('')+'</div>'
+    +'<div class="skillbars">'+AREAS.map(a=>skillBar(a,t.skills[a])).join('')+'</div>'
     +(taken
       ? '<div class="small dim">Recruited by '+esc((state.teams.find(x=>x.id===t.recruitedBy)||{}).name||'another team')+'</div>'
       : '<button class="btn btn-amber btn-sm" '+(disableReason?'disabled':'')+' onclick="recruitTalent(\''+t.id+'\')">'+(disableReason||'Recruit')+'</button>')
@@ -1043,6 +1105,10 @@ function talentCardMarket(t, team){
 function recruitTalent(talentId){
   const team = currentTeam();
   if(!team) return;
+  if(state.phaseStatus.marketplace!=='open'){
+    toast('Recruitment is not open yet.', 'warn');
+    return;
+  }
   const t = state.talents.find(x=>x.id===talentId);
   if(!t || t.recruitedBy) return;
   const goldFull = team.roster.some(id=>{const x=state.talents.find(tt=>tt.id===id); return x&&x.tier==='Gold';});
@@ -1238,14 +1304,23 @@ function renderEVPWorkspace(team){
 
 function renderMarketplace(team){
   if(state.phaseStatus.marketplace==='locked'){
-    return '<div class="panel"><div class="panel-head"><h3>Talent Marketplace</h3></div><p class="dim">The Marketplace unlocks once your facilitator records EVP judge scores and applies budgets.</p></div>';
+    return '<div class="panel"><div class="panel-head"><h3>Talent Marketplace</h3></div><p class="dim">The Marketplace is locked until the facilitator opens recruitment. EVP budgets have been allocated; use this time to plan your selections.</p></div>';
   }
   const closed = state.phaseStatus.marketplace==='closed';
   const gold = state.talents.filter(t=>t.tier==='Gold');
   const silver = state.talents.filter(t=>t.tier==='Silver');
   const roster = teamRoster(team);
+  const planningControl = evpControl();
+  const planningCountdown = planningControl.planningStatus==='running'
+    ? '<div class="timer-box warn" style="margin-top:12px;"><div class="label">Planning time remaining</div><div class="value" id="teamMarketplacePlanningTimer">'+formatTimer(timerRemaining(planningControl.planningEndsAt))+'</div></div>'
+    : planningControl.planningStatus==='ended'
+      ? '<div class="badge badge-open" style="margin-top:10px;">Planning time complete — awaiting facilitator</div>'
+      : '<div class="badge badge-locked" style="margin-top:10px;">Planning timer not started</div>';
   return '<div class="row" style="align-items:flex-start;">'
     +'<div style="flex:1;min-width:320px;" class="stack">'
+      +'<div class="panel"><div class="panel-head"><h3>Area Key</h3><span class="hint">Talent card labels</span></div>'
+      +'<div class="area-key">'+AREAS.map(a=>'<div class="area-key-item"><span class="area-key-label">'+a+'</span><span>'+esc(AREA_NAMES[a])+'</span></div>').join('')+'</div></div>'
+      +(state.phaseStatus.marketplace==='planning' ? '<div class="recruitment-warning"><strong>Important:</strong> Recruitment is final. Once you choose a talent, they are permanently added to your roster and cannot be released or exchanged. All teams draw from the same shared talent pool, so recruitment is first come, first served. Another team may claim your preferred talent before you do. Use planning mode to agree on your selections and backups before recruitment opens.'+planningCountdown+'</div>' : '')
       +'<div class="panel"><div class="panel-head"><h3>Gold Tier</h3><span class="hint">1 slot</span></div><div class="grid grid-3">'+gold.map(t=>talentCardMarket(t,team)).join('')+'</div></div>'
       +'<div class="panel"><div class="panel-head"><h3>Silver Tier</h3><span class="hint">4 slots</span></div><div class="grid grid-3">'+silver.map(t=>talentCardMarket(t,team)).join('')+'</div></div>'
     +'</div>'
@@ -1431,7 +1506,7 @@ function updateSessionRounds(value){
 }
 
 function renderAdminPhases(){
-  let html = '<div class="panel"><div class="panel-head"><h3>Phase 1 — EVP</h3><span class="badge '+(state.phaseStatus.evp==='open'?'badge-warn':state.phaseStatus.evp==='closed'?'badge-open':'badge-locked')+'">'+state.phaseStatus.evp+'</span></div>';
+  let html = '<div class="panel phase-panel"><div class="panel-head"><h3>Phase 1 — EVP</h3><span class="badge '+(state.phaseStatus.evp==='open'?'badge-warn':state.phaseStatus.evp==='closed'?'badge-open':'badge-locked')+'">'+state.phaseStatus.evp+'</span></div>';
   if(state.phaseStatus.evp==='locked'){
     html += '<button class="btn btn-amber" onclick="unlockEVP()">Unlock EVP Workspace</button>';
   } else if(state.phaseStatus.evp==='open'){
@@ -1443,7 +1518,7 @@ function renderAdminPhases(){
         ? '<div class="timer-box danger"><div class="label">Drafting</div><div class="value">TIME UP</div></div>'
         : '<button class="btn btn-amber" onclick="startEVPDraftTimer()">Start Drafting Timer</button>';
     const presentationControls = !control.presentationOrder.length
-      ? '<button class="btn btn-amber" onclick="spinPresentationWheel()">Spin Picker Wheel</button>'
+      ? '<button class="btn btn-amber" onclick="randomizePresentationOrder()">Randomize Presentation Order</button>'
       : control.presentationIndex>=control.presentationOrder.length
         ? '<div class="badge badge-open">All presentations complete</div>'
         : control.presentationStatus==='running'
@@ -1453,28 +1528,41 @@ function renderAdminPhases(){
           : '<button class="btn btn-green" onclick="startPresentationTimer()">Start 3-Min Presentation: '+esc((activeTeam||{}).name||'Next Team')+'</button><button class="btn btn-ghost" onclick="nextPresentationTeam()">Skip to Next Team</button>';
     html += '<p class="dim small">Run the onsite presentations, then record each judge’s rubric scores in the Scoring tab before applying results.</p>'
       +'<div class="grid grid-2">'
-      +'<div class="panel"><div class="panel-head"><h3>EVP Drafting Timer</h3><span class="hint">Maximum 20 minutes</span></div>'
+      +'<div class="panel"><div class="panel-head"><h3>EVP Drafting Timer</h3><span class="hint">1–20 minutes</span></div>'
       +'<div class="field"><label>Drafting time (minutes)</label><input type="number" min="1" max="20" value="'+control.draftMinutes+'" '+(control.draftStatus==='running'||control.draftStatus==='ended'?'disabled':'')+' onchange="setEVPDraftMinutes(this.value)"></div>'
       +'<div class="row">'+draftControls+'</div>'
       +'</div>'
-      +'<div class="panel"><div class="panel-head"><h3>EVP Presentation Picker</h3><span class="hint">3 minutes per team · hard stop</span></div>'
-      +renderPresentationWheel()
-      +'<div class="row">'+presentationControls+'</div>'
+      +'<div class="panel"><div class="panel-head"><h3>EVP Presentation Order</h3><span class="hint">Randomized once for all teams</span></div>'
+      +renderPresentationOrder()
+      +'<div class="field"><label>Presentation time (minutes)</label><input type="number" min="1" max="10" value="'+control.presentationMinutes+'" '+(control.presentationStatus==='running'||control.presentationStatus==='ended'?'disabled':'')+' onchange="setEVPPresentationMinutes(this.value)"></div>'
+      +'<div class="row">'+presentationControls.replace('Start 3-Min Presentation:', 'Start '+control.presentationMinutes+'-Min Presentation:')+'</div>'
       +'</div></div>'
-      +'<button class="btn btn-green" onclick="closeEVPApplyScores()">Apply Scores &amp; Unlock Marketplace</button>';
+      +'<button class="btn btn-green btn-phase-action" onclick="closeEVPApplyScores()">Apply Scores &amp; Close EVP</button>';
   } else {
     html += '<p class="dim small">Closed. Budgets applied to all teams.</p>';
   }
   html += '</div>';
 
-  html += '<div class="panel"><div class="panel-head"><h3>Phase 2 — Marketplace</h3><span class="badge '+(state.phaseStatus.marketplace==='open'?'badge-warn':state.phaseStatus.marketplace==='closed'?'badge-open':'badge-locked')+'">'+state.phaseStatus.marketplace+'</span></div>';
+  html += '<div class="panel phase-panel"><div class="panel-head"><h3>Phase 2 — Marketplace</h3><span class="badge '+(state.phaseStatus.marketplace==='open'?'badge-warn':state.phaseStatus.marketplace==='closed'?'badge-open':state.phaseStatus.marketplace==='planning'?'badge-warn':'badge-locked')+'">'+state.phaseStatus.marketplace+'</span></div>';
   if(state.phaseStatus.marketplace==='open'){
     html += '<p class="dim small">Rosters complete: '+state.teams.filter(t=>t.roster.length>=5).length+'/'+state.teams.length+'</p>'
       +'<button class="btn btn-green" onclick="closeMarketplace()">Close Marketplace &amp; Open Round 1</button>';
   } else if(state.phaseStatus.marketplace==='closed'){
     html += '<p class="dim small">Closed. Rounds are underway.</p>';
   } else {
-    html += '<p class="dim small">Awaiting EVP phase to close.</p>';
+    const planning = evpControl();
+    html += '<p class="dim small">Budgets are allocated. Teams can review the Marketplace and plan their selections before recruitment opens.</p>';
+    if(state.phaseStatus.evp!=='closed'){
+      html += '<span class="badge badge-locked">Awaiting EVP scores</span>';
+    } else if(planning.planningStatus==='running'){
+      html += '<div class="phase-control-stack"><div class="timer-box warn"><div class="label">Marketplace planning remaining</div><div class="value" id="marketplacePlanningTimer">'+formatTimer(timerRemaining(planning.planningEndsAt))+'</div></div>'
+        +'<button class="btn btn-red" onclick="endMarketplacePlanningTimer()">End Planning Early</button></div>';
+    } else if(planning.planningStatus==='ended'){
+      html += '<div class="phase-control-stack"><div class="row"><span class="badge badge-open">Planning time complete</span><button class="btn btn-green" onclick="unlockMarketplace()">Unlock Marketplace</button></div></div>';
+    } else {
+      html += '<div class="phase-control-stack"><div class="field"><label>Planning time (minutes)</label><input type="number" min="1" max="30" value="'+planning.planningMinutes+'" onchange="setMarketplacePlanningMinutes(this.value)"></div>'
+        +'<button class="btn btn-amber" onclick="startMarketplacePlanningTimer()">Start '+planning.planningMinutes+'-Minute Planning Timer</button></div>';
+    }
   }
   html += '</div>';
 
