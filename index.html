@@ -6,6 +6,9 @@
 <title>Workforce Strategy Simulation — Control Deck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
 :root{
   --g-950:#10151A; --g-900:#171F25; --g-850:#1C252C; --g-800:#222C33; --g-750:#2A343C;
@@ -291,6 +294,19 @@ textarea{resize:vertical;min-height:120px;}
    ========================================================================= */
 
 const STORAGE_KEY = 'wfsim_state_v2';
+const LOCAL_UI_KEY = 'wfsim_local_ui_v1';
+const SHARED_SESSION_ID = 'default';
+const TEAM_CODES = ['T1-ALPHA','T2-BRAVO','T3-CHARLIE','T4-DELTA','T5-ECHO','T6-FOXTROT','T7-GOLF','T8-HOTEL'];
+// Replace these values with the Firebase Web App config for the deployment.
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyBw5cJ0oOccWngdScOgo1-cvsbyLncKuoA',
+  authDomain: 'workforce-strategy-sim.firebaseapp.com',
+  databaseURL: 'https://workforce-strategy-sim-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'workforce-strategy-sim',
+  storageBucket: 'workforce-strategy-sim.firebasestorage.app',
+  messagingSenderId: '761657063147',
+  appId: '1:761657063147:web:214381d762f177edbb30ae'
+};
 const AREAS = ['A','B','C','D','E'];
 const AREA_NAMES = {A:'Screening',B:'Digester',C:'Washing',D:'Bleaching',E:'HDT'};
 const FACILITATOR_KEY = 'FACILITATOR';
@@ -330,7 +346,7 @@ function buildTalentPool(){
     const skills = {};
     AREAS.forEach(a=>skills[a]=Math.max(80, Math.min(96, base+ri(-3,3))));
     talents.push({
-      id: uid('tal'), name: genName(used), tier:'Gold',
+      id: 'tal_'+(i+1), name: genName(used), tier:'Gold',
       cost, skills, learning:0, recruitedBy:null, active:true, history:[]
     });
   }
@@ -346,7 +362,7 @@ function buildTalentPool(){
       skills[specialty] = Math.min(79, skills[specialty]+ri(18,28));
     }
     talents.push({
-      id: uid('tal'), name: genName(used), tier:'Silver',
+      id: 'tal_'+(i+1+10), name: genName(used), tier:'Silver',
       cost, skills, learning:0, recruitedBy:null, active:true, history:[]
     });
   }
@@ -374,8 +390,8 @@ function buildTeams(n){
   const teams = [];
   for(let i=0;i<n;i++){
     teams.push({
-      id: uid('team'), name:'Team '+String.fromCharCode(65+i), color: TEAM_COLORS[i%TEAM_COLORS.length],
-      code: 'T'+(i+1)+'-'+Math.random().toString(36).slice(2,5).toUpperCase(),
+      id: 'team_'+(i+1), name:'Team '+String.fromCharCode(65+i), color: TEAM_COLORS[i%TEAM_COLORS.length],
+      code: TEAM_CODES[i],
       budget:0, evpScore:null, evpJudgeTotals:[],
       roster:[], operational:0, readiness:0, complementary:0, final:0
     });
@@ -384,6 +400,7 @@ function buildTeams(n){
 }
 
 function freshState(numTeams, playersPerTeam, numRounds){
+  rng = mulberry32(20260701);
   numTeams = clampTeamCount(numTeams===undefined?8:numTeams);
   playersPerTeam = clampPlayersPerTeam(playersPerTeam===undefined?6:playersPerTeam);
   numRounds = clampRoundCount(numRounds===undefined?4:numRounds);
@@ -410,16 +427,85 @@ function freshState(numTeams, playersPerTeam, numRounds){
 }
 
 let state = load() || freshState();
+let sharedDb = null;
+let applyingRemoteState = false;
 
-function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+function sharedState(){
+  // Firebase rejects undefined values left by intentionally sparse judge scores.
+  return JSON.parse(JSON.stringify(Object.assign({}, state, { role:null, ui:null })));
+}
+function firebaseConfigured(){
+  return typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId;
+}
+function normalizeTeamCodes(sessionState){
+  if(Array.isArray(sessionState.teams)){
+    sessionState.teams.forEach(function(team,index){
+      if(index < TEAM_CODES.length) team.code = TEAM_CODES[index];
+    });
+  }
+  return sessionState;
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(LOCAL_UI_KEY, JSON.stringify({role:state.role, ui:state.ui}));
+  if(sharedDb && !applyingRemoteState){
+    sharedDb.set(sharedState()).catch(function(error){
+      console.error('Unable to save shared session.', error);
+      toast('Shared session could not be saved.', 'err');
+    });
+  }
+}
 function load(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return null;
-    return JSON.parse(raw);
-  }catch(e){ return null; }
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return null;
+  const loaded = normalizeTeamCodes(JSON.parse(raw));
+  const localRaw = localStorage.getItem(LOCAL_UI_KEY);
+  if(localRaw){
+    const local = JSON.parse(localRaw);
+    loaded.role = local.role || null;
+    loaded.ui = local.ui || loaded.ui;
+  }
+  return loaded;
 }
 function persistAndRender(){ save(); render(); }
+
+function initSharedSync(){
+  if(!firebaseConfigured()){
+    console.warn('Firebase shared session is not configured; using browser-local persistence.');
+    return;
+  }
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    firebase.auth().signInAnonymously().then(function(){
+      sharedDb = firebase.database().ref('sessions/'+SHARED_SESSION_ID);
+      sharedDb.on('value', function(snapshot){
+        const remote = snapshot.val();
+        if(!remote){
+          save();
+          return;
+        }
+        const localRole = state.role;
+        const localUi = state.ui;
+        applyingRemoteState = true;
+        state = normalizeTeamCodes(remote);
+        state.role = localRole;
+        state.ui = localUi;
+        applyingRemoteState = false;
+        window.__draft = {};
+        render();
+      }, function(error){
+        console.error('Unable to read shared session.', error);
+        toast('Shared session could not be loaded.', 'err');
+      });
+    }).catch(function(error){
+      console.error('Unable to authenticate shared session.', error);
+      toast('Shared session authentication failed.', 'err');
+    });
+  }catch(error){
+    console.error('Unable to initialize shared session.', error);
+    toast('Shared session configuration is invalid.', 'err');
+  }
+}
 
 function logAction(type, teamId, details){
   state.logs.unshift({ id:uid('log'), type, teamId: teamId||null, round: state.session.currentRound, timestamp: new Date().toISOString(), details });
@@ -1504,12 +1590,13 @@ function render(){
   } else {
     html = renderTopbar() + renderTeamPortal();
   }
-  html += '<div class="footer-tick"><span>Workforce Strategy Simulation · local session persistence</span><span>'+new Date().toLocaleString()+'</span></div>';
+  html += '<div class="footer-tick"><span>Workforce Strategy Simulation · '+(sharedDb?'shared session':'browser-local session')+'</span><span>'+new Date().toLocaleString()+'</span></div>';
   html += renderConfirmModal();
   app.innerHTML = html;
 }
 
 render();
+initSharedSync();
 </script>
 </body>
 </html>
