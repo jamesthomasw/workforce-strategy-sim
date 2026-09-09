@@ -432,12 +432,40 @@ let applyingRemoteState = false;
 
 function sharedState(){
   // Firebase rejects undefined values left by intentionally sparse judge scores.
-  return JSON.parse(JSON.stringify(Object.assign({}, state, { role:null, ui:null })));
+  const shared = JSON.parse(JSON.stringify(state));
+  delete shared.role;
+  delete shared.ui;
+  return shared;
 }
 function firebaseConfigured(){
   return typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId;
 }
 function normalizeTeamCodes(sessionState){
+  if(!sessionState || typeof sessionState !== 'object') return freshState();
+  sessionState.session = sessionState.session || freshState().session;
+  if(!sessionState.ui){
+    sessionState.ui = { route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' };
+  }
+  if(!sessionState.phaseStatus) sessionState.phaseStatus = { evp:'locked', marketplace:'locked' };
+  if(!sessionState.evpControl) sessionState.evpControl = freshState().evpControl;
+  sessionState.teams = Array.isArray(sessionState.teams) ? sessionState.teams : Object.keys(sessionState.teams || {}).map(function(key){ return sessionState.teams[key]; });
+  sessionState.talents = Array.isArray(sessionState.talents) ? sessionState.talents : Object.keys(sessionState.talents || {}).map(function(key){ return sessionState.talents[key]; });
+  sessionState.rounds = Array.isArray(sessionState.rounds) ? sessionState.rounds : Object.keys(sessionState.rounds || {}).map(function(key){ return sessionState.rounds[key]; });
+  sessionState.assignments = Array.isArray(sessionState.assignments) ? sessionState.assignments : Object.keys(sessionState.assignments || {}).map(function(key){ return sessionState.assignments[key]; });
+  sessionState.events = Array.isArray(sessionState.events) ? sessionState.events : Object.keys(sessionState.events || {}).map(function(key){ return sessionState.events[key]; });
+  sessionState.logs = Array.isArray(sessionState.logs) ? sessionState.logs : Object.keys(sessionState.logs || {}).map(function(key){ return sessionState.logs[key]; });
+  sessionState.teams.forEach(function(team){
+    team.roster = Array.isArray(team.roster) ? team.roster : Object.keys(team.roster || {}).map(function(key){ return team.roster[key]; });
+    team.evpJudgeTotals = Array.isArray(team.evpJudgeTotals) ? team.evpJudgeTotals : Object.keys(team.evpJudgeTotals || {}).map(function(key){ return team.evpJudgeTotals[key]; });
+  });
+  sessionState.talents.forEach(function(talent){
+    talent.history = Array.isArray(talent.history) ? talent.history : Object.keys(talent.history || {}).map(function(key){ return talent.history[key]; });
+  });
+  sessionState.rounds.forEach(function(round){
+    round.teamSubs = round.teamSubs || {};
+    round.results = round.results || {};
+    round.bonus = round.bonus || {};
+  });
   if(Array.isArray(sessionState.teams)){
     sessionState.teams.forEach(function(team,index){
       if(index < TEAM_CODES.length) team.code = TEAM_CODES[index];
@@ -484,8 +512,8 @@ function initSharedSync(){
           save();
           return;
         }
-        const localRole = state.role;
-        const localUi = state.ui;
+        const localRole = state.role || null;
+        const localUi = state.ui || { route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' };
         applyingRemoteState = true;
         state = normalizeTeamCodes(remote);
         state.role = localRole;
