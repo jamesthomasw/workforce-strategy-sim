@@ -1383,9 +1383,10 @@ function boardPlacementsForTeam(team, round){
   return placements;
 }
 
-function validateDraftPlacements(team, placements){
+function validateDraftPlacements(team, placements, requireComplete){
   const assigned = Object.values(placements).filter(Boolean);
-  if(assigned.length !== AREAS.length){
+  const completeCheck = requireComplete !== false;
+  if(completeCheck && assigned.length !== AREAS.length){
     return { valid:false, reason:'Place one talent in each work area (A–E) before locking.' };
   }
   if(new Set(assigned).size !== assigned.length){
@@ -1429,7 +1430,7 @@ function onDropZone(ev, area){
     delete draft[area];
   }
   draft[area] = talentId;
-  const validation = validateDraftPlacements(team, draft);
+  const validation = validateDraftPlacements(team, draft, false);
   if(!validation.valid){
     delete draft[area];
     if(existingTalentId && existingTalentId !== talentId){ draft[area] = existingTalentId; }
@@ -1459,7 +1460,7 @@ function lockPlanningBoard(){
   const round = state.session.currentRound;
   const key = team.id+'_'+round;
   const draft = draftFor(team.id, round);
-  const validation = validateDraftPlacements(team, draft);
+  const validation = validateDraftPlacements(team, draft, true);
   if(!validation.valid){
     toast(validation.reason, 'warn');
     return;
