@@ -107,7 +107,8 @@ p{margin:0;}
 .grid{display:grid;gap:14px;}
 .grid-2{grid-template-columns:1fr 1fr;}
 .grid-3{grid-template-columns:repeat(3,1fr);}
-@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+.grid-4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
 
 .main{flex:1;display:flex;}
 .content{flex:1;padding:18px;max-width:1400px;margin:0 auto;width:100%;}
@@ -187,6 +188,9 @@ tr:last-child td{border-bottom:none;}
 .skillbar .lbl{font-size:9px;color:var(--text-3);font-family:var(--font-m);}
 .skillbar .track{width:100%;height:22px;background:var(--g-800);border:1px solid var(--line-soft);position:relative;border-radius:2px;overflow:hidden;}
 .skillbar .fill{position:absolute;bottom:0;left:0;right:0;background:var(--cyan);}
+.skillbar.specialty .lbl{color:var(--amber);font-weight:700;}
+.skillbar.specialty .track{border-color:var(--amber-line);}
+.skillbar.specialty .fill{background:var(--amber);}
 .skillbar .val{font-size:9px;font-family:var(--font-m);color:var(--text-2);}
 .area-key{display:flex;flex-wrap:wrap;gap:10px;}
 .area-key-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line-soft);border-radius:3px;background:var(--g-850);font-size:12px;}
@@ -224,7 +228,9 @@ tr:last-child td{border-bottom:none;}
   padding:10px 12px;border-bottom:1px solid var(--line-soft);
 }
 .lb-rank{font-family:var(--font-m);font-weight:700;font-size:16px;color:var(--text-2);}
-.lb-rank.top{color:var(--amber);}
+.lb-rank.gold{color:var(--gold);}
+.lb-rank.silver{color:var(--silver);}
+.lb-rank.bronze{color:#C47A52;}
 .lb-score{font-family:var(--font-m);text-align:right;}
 .lb-score .num{font-size:15px;font-weight:700;}
 .lb-score .lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;}
@@ -246,6 +252,28 @@ textarea{resize:vertical;min-height:120px;}
 
 .progress-track{height:6px;background:var(--g-800);border-radius:3px;overflow:hidden;border:1px solid var(--line-soft);}
 .progress-fill{height:100%;background:var(--amber);}
+.round-flow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 16px;}
+.round-flow-step{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--line-soft);background:var(--g-850);border-radius:var(--radius);color:var(--text-3);}
+.round-flow-step.active{border-color:var(--amber-line);background:var(--amber-soft);color:var(--amber);}
+.round-flow-step.done{border-color:#3A5F46;background:var(--green-soft);color:var(--green);}
+.round-flow-step .step-number{display:grid;place-items:center;width:22px;height:22px;border:1px solid currentColor;border-radius:50%;font:600 11px var(--font-m);flex:none;}
+.tree-entry-panel{margin-top:14px;border-color:#2E5A63;background:linear-gradient(135deg,var(--g-900),#17282D);}
+.tree-entry-panel .panel-head h3{color:var(--cyan);}
+.tree-entry-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.tree-entry-card{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid var(--line-soft);background:var(--g-850);border-radius:var(--radius);}
+.tree-entry-card.complete{border-color:#3A5F46;}
+.tree-entry-card label{font-weight:600;}
+.tree-entry-card input{width:76px;padding:7px 8px;text-align:center;font:600 15px var(--font-m);color:var(--text-1);background:var(--g-950);border:1px solid var(--line);border-radius:var(--radius);}
+.tree-entry-card input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 2px var(--cyan-soft);}
+.tree-entry-card.complete input{border-color:#3A5F46;color:var(--green);}
+.tree-entry-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft);}
+.dart-panel{margin-top:14px;border-color:var(--amber-line);background:linear-gradient(135deg,var(--g-900),#29251C);}
+.dart-panel .panel-head h3{color:var(--amber);}
+.dart-legend{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0;padding:9px 11px;border-left:2px solid var(--amber);background:var(--g-850);color:var(--text-2);font-size:12px;}
+.dart-panel select{min-width:145px;padding:6px 8px;color:var(--text-1);background:var(--g-950);border:1px solid var(--line);border-radius:var(--radius);}
+.dart-panel select:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2px var(--amber-soft);}
+@media(max-width:700px){.round-flow{grid-template-columns:1fr;}.tree-entry-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:420px){.tree-entry-grid{grid-template-columns:1fr;}}
 
 .login-shell{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;
   background:
@@ -352,7 +380,7 @@ function buildTalentPool(){
     AREAS.forEach(a=>skills[a]=Math.max(80, Math.min(96, base+ri(-3,3))));
     talents.push({
       id: 'tal_'+(i+1), name: genName(used), tier:'Gold',
-      cost, skills, learning:0, recruitedBy:null, active:true, history:[]
+      cost, skills, originalSkills:Object.assign({}, skills), learning:0, recruitedBy:null, active:true, history:[]
     });
   }
   // Silver talent scales with cost. A talent may have one strong specialty,
@@ -361,14 +389,12 @@ function buildTalentPool(){
     const cost = ri(15,55);
     const base = 24 + Math.round((cost-15)*0.85); // 24–58, tied to cost
     const skills = {};
-    AREAS.forEach(a=>skills[a]=Math.max(15, Math.min(70, base+ri(-6,6))));
-    if(rng()<0.65){
-      const specialty = pick(AREAS);
-      skills[specialty] = Math.min(79, skills[specialty]+ri(18,28));
-    }
+    const specialty = pick(AREAS);
+    AREAS.forEach(a=>skills[a]=Math.max(18, Math.min(50, base+ri(-5,5))));
+    skills[specialty] = Math.max(72, Math.min(88, 68 + Math.round((cost-15)*0.45) + ri(-2,2)));
     talents.push({
       id: 'tal_'+(i+1+12), name: genName(used), tier:'Silver',
-      cost, skills, learning:0, recruitedBy:null, active:true, history:[]
+      specialty, cost, skills, originalSkills:Object.assign({}, skills), learning:0, recruitedBy:null, active:true, history:[]
     });
   }
   return talents;
@@ -398,7 +424,7 @@ function buildTeams(n){
       id: 'team_'+(i+1), name:'Team '+String.fromCharCode(65+i), color: TEAM_COLORS[i%TEAM_COLORS.length],
       code: TEAM_CODES[i],
       budget:0, evpScore:null, evpJudgeTotals:[],
-      roster:[], operational:0, readiness:0, complementary:0, final:0
+      roster:[], operational:0, rawOperational:0, operationalPoints:0, readiness:0, complementary:0, final:0
     });
   }
   return teams;
@@ -413,11 +439,12 @@ function freshState(numTeams, playersPerTeam, numRounds){
   const teams = buildTeams(numTeams);
   const rounds = [];
   for(let r=1;r<=numRounds;r++){
-    rounds.push({ number:r, status:'locked', teamSubs:{}, results:{}, bonus:{} });
+    rounds.push({ number:r, status:'locked', teamSubs:{}, results:{}, treeResults:{}, treeSubs:{}, bonus:{}, folding:{status:'locked', endsAt:null} });
   }
   return {
     session:{ name:'Workforce Strategy Simulation', numRounds, evpMultiplier:3, numJudges:3, currentRound:0, numTeams, playersPerTeam },
-    evpControl:{ draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null },
+    evpControl:{ draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null, dartRound:{status:'locked',throws:{}} },
+    foldingControl:{ minutes:10, budget:16, underTargetMax:9, targetMin:14, targetMax:16, overachieveMax:20, belowMultiplier:0.9, neutralMultiplier:1, targetMultiplier:1.1, overachieveMultiplier:1.2, exceedMultiplier:1.3 },
     role: null, // {type:'facilitator'} | {type:'team', teamId}
     ui:{ route:'login', teamTab:'dashboard', adminTab:'teams', loginMode:null, selectedEventTeam:'', selectedEventType:'Retirement', selectedEventTalent:'' },
     phaseStatus: { evp:'locked', marketplace:'locked' },
@@ -432,6 +459,7 @@ function freshState(numTeams, playersPerTeam, numRounds){
 }
 
 let state = load() || freshState();
+recomputeAllScores();
 let sharedDb = null;
 let applyingRemoteState = false;
 
@@ -441,6 +469,9 @@ function sharedState(){
   delete shared.role;
   delete shared.ui;
   return shared;
+}
+function stateSafeDartStatus(sessionState){
+  return sessionState && sessionState.phaseStatus && sessionState.phaseStatus.evp==='closed' ? 'closed' : 'locked';
 }
 function firebaseConfigured(){
   return typeof firebase !== 'undefined' && FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.databaseURL && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId;
@@ -457,6 +488,19 @@ function normalizeTeamCodes(sessionState){
   }
   const defaultEVPControl = freshState().evpControl;
   sessionState.evpControl = Object.assign(defaultEVPControl, sessionState.evpControl || {});
+  sessionState.evpControl.dartRound = Object.assign({status:stateSafeDartStatus(sessionState),throws:{}}, sessionState.evpControl.dartRound || {});
+  sessionState.evpControl.dartRound.throws = sessionState.evpControl.dartRound.throws || {};
+  sessionState.foldingControl = Object.assign(freshState().foldingControl, sessionState.foldingControl || {});
+  sessionState.foldingControl.minutes = Math.max(1, Math.min(60, parseInt(sessionState.foldingControl.minutes,10)||10));
+  sessionState.foldingControl.budget = Math.max(0, parseInt(sessionState.foldingControl.budget,10)||16);
+  sessionState.foldingControl.underTargetMax = Math.max(0, parseInt(sessionState.foldingControl.underTargetMax,10)||9);
+  sessionState.foldingControl.targetMin = Math.max(0, parseInt(sessionState.foldingControl.targetMin,10)||14);
+  sessionState.foldingControl.targetMax = Math.max(sessionState.foldingControl.targetMin, parseInt(sessionState.foldingControl.targetMax,10)||16);
+  sessionState.foldingControl.overachieveMax = Math.max(sessionState.foldingControl.targetMax, parseInt(sessionState.foldingControl.overachieveMax,10)||20);
+  ['belowMultiplier','neutralMultiplier','targetMultiplier','overachieveMultiplier','exceedMultiplier'].forEach(function(key){
+    const value = Number(sessionState.foldingControl[key]);
+    sessionState.foldingControl[key] = Number.isFinite(value) && value >= 0 ? value : freshState().foldingControl[key];
+  });
   sessionState.evpControl.presentationMinutes = Math.max(1, Math.min(10, parseInt(sessionState.evpControl.presentationMinutes,10)||3));
   sessionState.evpControl.planningMinutes = Math.max(1, Math.min(30, parseInt(sessionState.evpControl.planningMinutes,10)||5));
   sessionState.evpControl.presentationOrder = Array.isArray(sessionState.evpControl.presentationOrder)
@@ -473,14 +517,40 @@ function normalizeTeamCodes(sessionState){
     team.evpJudgeTotals = team.evpJudgeTotals || [];
     team.roster = Array.isArray(team.roster) ? team.roster : Object.keys(team.roster || {}).map(function(key){ return team.roster[key]; });
     team.evpJudgeTotals = Array.isArray(team.evpJudgeTotals) ? team.evpJudgeTotals : Object.keys(team.evpJudgeTotals || {}).map(function(key){ return team.evpJudgeTotals[key]; });
+    team.rawOperational = Number.isFinite(Number(team.rawOperational)) ? Number(team.rawOperational) : 0;
+    team.operationalPoints = Number.isFinite(Number(team.operationalPoints)) ? Number(team.operationalPoints) : 0;
   });
   sessionState.talents.forEach(function(talent){
+    if(!talent.originalSkills || typeof talent.originalSkills!=='object'){
+      talent.originalSkills = {};
+      AREAS.forEach(function(area){
+        const learned = sessionState.assignments
+          .filter(function(assignment){ return assignment.talentId===talent.id && assignment.area===area; })
+          .reduce(function(sum, assignment){
+            const increment = Number.isFinite(Number(assignment.totalIncrement))
+              ? Number(assignment.totalIncrement)
+              : (Number(assignment.points)||0);
+            return sum + Math.max(0, increment);
+          }, 0);
+        talent.originalSkills[area] = Math.max(0, (Number(talent.skills[area])||0) - learned);
+      });
+    }
     talent.history = Array.isArray(talent.history) ? talent.history : Object.keys(talent.history || {}).map(function(key){ return talent.history[key]; });
+    if(talent.tier==='Silver'){
+      if(!talent.specialty || AREAS.indexOf(talent.specialty)<0){
+        talent.specialty = AREAS.reduce(function(best,area){ return talent.skills[area] > talent.skills[best] ? area : best; }, AREAS[0]);
+      }
+      const strongestOther = Math.max.apply(null, AREAS.filter(function(area){ return area!==talent.specialty; }).map(function(area){ return Number(talent.skills[area])||0; }));
+      talent.skills[talent.specialty] = Math.max(Number(talent.skills[talent.specialty])||0, Math.min(88, Math.max(70, strongestOther+20)));
+    }
   });
   sessionState.rounds.forEach(function(round){
     round.teamSubs = round.teamSubs || {};
     round.results = round.results || {};
     round.bonus = round.bonus || {};
+    round.treeResults = round.treeResults || {};
+    round.treeSubs = round.treeSubs || {};
+    round.folding = Object.assign({status:'locked', endsAt:null}, round.folding || {});
   });
   if(Array.isArray(sessionState.teams)){
     sessionState.teams.forEach(function(team,index){
@@ -557,9 +627,17 @@ function logAction(type, teamId, details){
 
 function evpControl(){
   if(!state.evpControl){
-    state.evpControl = { draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null };
+    state.evpControl = { draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null, dartRound:{status:'locked',throws:{}} };
   }
+  state.evpControl.dartRound = state.evpControl.dartRound || {status:'locked',throws:{}};
+  state.evpControl.dartRound.throws = state.evpControl.dartRound.throws || {};
   return state.evpControl;
+}
+function foldingControl(){
+  if(!state.foldingControl){
+    state.foldingControl = { minutes:10, budget:16, underTargetMax:9, targetMin:14, targetMax:16, overachieveMax:20, belowMultiplier:0.9, neutralMultiplier:1, targetMultiplier:1.1, overachieveMultiplier:1.2, exceedMultiplier:1.3 };
+  }
+  return state.foldingControl;
 }
 function formatTimer(ms){
   const seconds = Math.max(0, Math.ceil(ms/1000));
@@ -588,6 +666,13 @@ function liveTimerTick(){
     const teamDisplay = document.getElementById('teamMarketplacePlanningTimer');
     if(teamDisplay) teamDisplay.textContent = formatTimer(remaining);
     if(remaining===0){ control.planningStatus='ended'; control.planningEndsAt=null; changed=true; toast('Marketplace planning time is up.', 'warn'); }
+  }
+  const round = state.rounds[state.session.currentRound-1];
+  if(round && round.folding && round.folding.status==='running'){
+    const remaining = timerRemaining(round.folding.endsAt);
+    const display = document.getElementById('foldingTimer');
+    if(display) display.textContent = formatTimer(remaining);
+    if(remaining===0){ round.folding.status='ended'; round.folding.endsAt=null; changed=true; toast('Origami tree folding time is up.', 'warn'); }
   }
   if(changed) persistAndRender();
 }
@@ -667,33 +752,51 @@ function priorAssignmentsFor(teamId, talentId, beforeRound){
 
 function exposureTypeFor(teamId, talentId, area, round){
   const prior = priorAssignmentsFor(teamId, talentId, round).sort((a,b)=>a.round-b.round);
-  if(prior.length===0) return 'New';
-  const mostRecent = prior[prior.length-1];
-  if(mostRecent.area === area) return 'Specialization';
-  const everWorked = prior.some(p=>p.area===area);
-  return everWorked ? 'Repeated' : 'New';
+  const talent = state.talents.find(t=>t.id===talentId);
+  if(talent && talent.specialty===area) return 'Specialization';
+  if(talent && !talent.specialty && prior.length && prior[prior.length-1].area===area) return 'Specialization';
+  return prior.some(p=>p.area===area) ? 'Repeated' : 'New';
 }
-function pointsForExposure(type){
-  return type==='New' ? 15 : type==='Specialization' ? 8 : type==='Repeated' ? 12 : 0;
+function standardLearningIncrement(skill){
+  if(skill < 40) return 20;
+  if(skill < 60) return 15;
+  if(skill < 80) return 12;
+  return 8;
+}
+function additionalExposureIncrement(teamId, talentId, area, round, type){
+  if(type==='Specialization') return 0;
+  const priorSameArea = priorAssignmentsFor(teamId, talentId, round).filter(a=>a.area===area).length;
+  if(priorSameArea===0) return 10;
+  if(priorSameArea===1) return 5;
+  return 0;
 }
 
 // Called when a team locks their assignment for a round (creates Assignment records)
 function commitAssignment(team, round, placements){
   // placements: {area: talentId}
+  const validation = validateDraftPlacements(team, placements);
+  if(!validation.valid){
+    console.warn('Blocked invalid assignment: '+validation.reason);
+    return;
+  }
   AREAS.forEach(area=>{
     const talentId = placements[area];
     if(!talentId) return;
     const type = exposureTypeFor(team.id, talentId, area, round);
-    const pts = pointsForExposure(type);
     const talent = state.talents.find(t=>t.id===talentId);
-    const before = talent.learning || 0;
-    talent.learning = Math.min(100, before + pts);
-    const awarded = talent.learning - before;
+    const skillBefore = Number(talent.skills[area]) || 0;
+    const standardIncrement = standardLearningIncrement(skillBefore);
+    const exposureBonus = additionalExposureIncrement(team.id, talentId, area, round, type);
+    const totalIncrement = standardIncrement + exposureBonus;
+    talent.skills[area] = Math.min(100, skillBefore + totalIncrement);
+    const learningBefore = talent.learning || 0;
+    talent.learning = Math.min(100, learningBefore + totalIncrement);
     state.assignments.push({
       id: uid('asg'), teamId: team.id, talentId, area, round,
-      exposureType: type, points: awarded
+      exposureType: type, standardIncrement, exposureBonus, totalIncrement,
+      points: talent.learning - learningBefore
     });
-    talent.history.push({round, area});
+    talent.history.push({round, area, standardIncrement, exposureBonus});
   });
 }
 
@@ -705,16 +808,105 @@ function computeOperationalForRound(team, round){
     const talent = state.talents.find(t=>t.id===a.talentId);
     if(talent) sum += talent.skills[a.area];
   });
-  let avg = sum / AREAS.length; // out of 100, unfilled areas count as 0
+  let score = sum; // cumulative score from each talent's assigned work-area attribute
   const bonus = state.rounds[round-1] && state.rounds[round-1].bonus[team.id] ? state.rounds[round-1].bonus[team.id] : 0;
-  return Math.min(100, Math.round(avg + bonus));
+  return Math.round(score + bonus);
+}
+
+function treeMultiplier(count){
+  const c = foldingControl();
+  if(count <= c.underTargetMax) return c.belowMultiplier;
+  if(count < c.targetMin) return c.neutralMultiplier;
+  if(count <= c.targetMax) return c.targetMultiplier;
+  if(count <= c.overachieveMax) return c.overachieveMultiplier;
+  return c.exceedMultiplier;
+}
+function treeBandLabel(count){
+  const c = foldingControl();
+  if(count <= c.underTargetMax) return 'Below target';
+  if(count < c.targetMin) return 'Neutral';
+  if(count <= c.targetMax) return 'Budget achieved';
+  if(count <= c.overachieveMax) return 'Overachieved';
+  return 'Exceeded';
+}
+function setFoldingSetting(field, value){
+  const c = foldingControl();
+  if(field==='minutes') c.minutes = Math.max(1, Math.min(60, parseInt(value,10)||10));
+  else if(field==='budget'){
+    c.budget = Math.max(0, parseInt(value,10)||0);
+    c.underTargetMax = Math.max(0, c.budget-7);
+    c.targetMin = Math.max(0, c.budget-2);
+    c.targetMax = c.budget;
+    c.overachieveMax = c.budget+4;
+  }
+  else if(['underTargetMax','targetMin','targetMax','overachieveMax'].indexOf(field)>=0) c[field] = Math.max(0, parseInt(value,10)||0);
+  else c[field] = Math.max(0, Number(value)||0);
+  persistAndRender();
+}
+function startFoldingRound(){
+  const round = state.rounds[state.session.currentRound-1];
+  if(!round || round.status!=='open') return;
+  const locked = state.teams.filter(t=>round.teamSubs[t.id]).length;
+  if(locked < state.teams.length){ toast('All team assignments must be locked before folding starts.', 'warn'); return; }
+  round.folding.status = 'running';
+  round.folding.endsAt = new Date(Date.now()+foldingControl().minutes*60000).toISOString();
+  logAction('TimerStart', null, 'Origami tree folding started for Round '+round.number+' ('+foldingControl().minutes+' minutes)');
+  persistAndRender();
+}
+function endFoldingRound(){
+  const round = state.rounds[state.session.currentRound-1];
+  if(!round || round.folding.status!=='running') return;
+  round.folding.status='ended';
+  round.folding.endsAt=null;
+  logAction('TimerEnd', null, 'Origami tree folding ended for Round '+round.number);
+  persistAndRender();
+}
+function submitTreeCount(value){
+  const team = currentTeam();
+  const round = state.rounds[state.session.currentRound-1];
+  const count = parseInt(value,10);
+  if(!team || !round || round.folding.status!=='running'){ toast('Tree folding is not currently open.', 'warn'); return; }
+  if(!Number.isInteger(count) || count<0){ toast('Enter a whole number of folded trees.', 'warn'); return; }
+  round.treeSubs[team.id] = count;
+  logAction('TreeSubmission', team.id, count+' folded trees submitted for Round '+round.number);
+  persistAndRender();
+}
+function recordTreeCountForTeam(teamId, value){
+  const round = state.rounds[state.session.currentRound-1];
+  const team = state.teams.find(t=>t.id===teamId);
+  const count = parseInt(value,10);
+  if(!team || !round || round.status!=='open' || round.folding.status==='locked'){
+    toast('Open tree folding before recording team results.', 'warn');
+    return;
+  }
+  if(!Number.isInteger(count) || count<0){
+    toast('Enter a whole number of folded trees.', 'warn');
+    return;
+  }
+  round.treeSubs[team.id] = count;
+  logAction('TreeSubmission', team.id, count+' folded trees recorded by facilitator for Round '+round.number);
+  persistAndRender();
 }
 
 function computeReadiness(team){
   const roster = teamRoster(team);
   if(roster.length===0) return 0;
-  const sum = roster.reduce((s,t)=>s+(t.learning||0),0);
-  return Math.round(sum / roster.length);
+  const assignments = state.assignments.filter(a=>a.teamId===team.id);
+  const averageSkillGrowth = assignments.reduce((sum,a)=>sum+(Number.isFinite(Number(a.totalIncrement)) ? Number(a.totalIncrement) : (Number(a.points)||0)),0) / roster.length;
+  const scoredRounds = state.rounds.filter(r=>r.status==='scored');
+  let rotationBonus = 0;
+  scoredRounds.forEach(round=>{
+    const previousRound = round.number > 1 ? currentAssignmentsFor(team.id, round.number-1) : [];
+    const currentRound = currentAssignmentsFor(team.id, round.number);
+    if(!previousRound.length || !currentRound.length) return;
+    const previousByTalent = {};
+    previousRound.forEach(a=>{ previousByTalent[a.talentId] = a.area; });
+    const rotated = currentRound.filter(a=>previousByTalent[a.talentId] && previousByTalent[a.talentId]!==a.area).length;
+    if(rotated > roster.length/2) rotationBonus += 5;
+  });
+  const successionReady = roster.filter(t=>t.tier==='Silver' && AREAS.filter(area=>t.skills[area]>75).length>3).length;
+  const successionBonus = successionReady>=3 ? 15 : successionReady===2 ? 10 : successionReady===1 ? 5 : 0;
+  return Math.min(40, Math.round(Math.min(20, averageSkillGrowth) + rotationBonus + successionBonus));
 }
 
 function computeComplementary(team){
@@ -727,19 +919,34 @@ function computeComplementary(team){
   });
   return Math.round(sum / AREAS.length);
 }
+function calculateFinalScore(team){
+  return Math.round(
+    team.operationalPoints +
+    Math.min(40, team.readiness) +
+    Math.min(20, team.complementary)
+  );
+}
 
 function recomputeTeamScores(team){
   const scoredRounds = state.rounds.filter(r=>r.status==='scored' && r.results[team.id]!==undefined);
-  team.operational = scoredRounds.length
-    ? Math.round(scoredRounds.reduce((s,r)=>s+r.results[team.id],0)/scoredRounds.length)
-    : 0;
+  team.rawOperational = scoredRounds.reduce(function(sum,r){
+    return sum + (r.treeResults[team.id] ? r.treeResults[team.id].base : r.results[team.id]);
+  },0);
+  team.operational = scoredRounds.reduce((s,r)=>s+r.results[team.id],0);
   team.readiness = computeReadiness(team);
   team.complementary = computeComplementary(team);
-  team.final = Math.round(0.4*team.operational + 0.4*team.readiness + 0.2*team.complementary);
 }
 
 function recomputeAllScores(){
   state.teams.forEach(recomputeTeamScores);
+  const finalRound = state.rounds.filter(r=>r.status==='scored').slice(-1)[0];
+  const finalScores = state.teams.map(team=>finalRound && finalRound.results[team.id]!==undefined ? finalRound.results[team.id] : 0);
+  const highestFinalRoundScore = Math.max(0,...finalScores);
+  state.teams.forEach(team=>{
+    const score = finalRound && finalRound.results[team.id]!==undefined ? finalRound.results[team.id] : 0;
+    team.operationalPoints = highestFinalRoundScore > 0 ? (score / highestFinalRoundScore) * 40 : 0;
+    team.final = calculateFinalScore(team);
+  });
 }
 
 /* ============================== DISRUPTION ENGINE ============================== */
@@ -878,8 +1085,39 @@ function closeEVPApplyScores(){
   if(missing.length){ toast('Complete every judge rubric score for every team first.', 'warn'); return; }
   state.teams.forEach(t=>{ t.budget = computeStartingBudget(t.evpScore); });
   state.phaseStatus.evp = 'closed';
-  state.phaseStatus.marketplace = 'planning';
-  logAction('PhaseClose', null, 'EVP scored and budgets applied; Marketplace remains locked');
+  const dart = evpControl().dartRound;
+  dart.status = 'open';
+  dart.throws = {};
+  state.phaseStatus.marketplace = 'locked';
+  logAction('PhaseClose', null, 'EVP scored and budgets applied; Dart bonus round opened');
+  persistAndRender();
+}
+function recordDartThrow(teamId, throwIndex, value){
+  const dart = evpControl().dartRound;
+  const team = state.teams.find(t=>t.id===teamId);
+  const index = Number(throwIndex);
+  const score = Number(value);
+  if(dart.status!=='open' || !team || !Number.isInteger(index) || index<0 || index>2){
+    toast('The dart bonus round is not open for this throw.', 'warn');
+    return;
+  }
+  if(![0,10,20,30].includes(score)){
+    toast('Select a valid dart result.', 'warn');
+    return;
+  }
+  const key = teamId+'_'+index;
+  dart.throws[key] = score;
+  if(index===2){
+    team.budget = Math.max(0, team.budget - (Number(team.dartBonus)||0) + score);
+    team.dartBonus = score;
+  }
+  logAction('DartThrow', team.id, (index<2?'Practice':'Final')+' dart throw recorded: '+score+' coins');
+  const finalComplete = state.teams.every(t=>dart.throws[t.id+'_2']!==undefined);
+  if(finalComplete){
+    dart.status = 'closed';
+    state.phaseStatus.marketplace = 'planning';
+    logAction('DartRoundClose', null, 'Dart bonus round complete; Marketplace planning unlocked');
+  }
   persistAndRender();
 }
 function startMarketplacePlanningTimer(){
@@ -946,9 +1184,21 @@ function lockTeamRound(team, round){
 function scoreCurrentRound(){
   const round = state.session.currentRound;
   const r = state.rounds[round-1];
+  if(!r || r.folding.status==='locked' || r.folding.status==='running'){
+    toast('Complete the origami tree folding challenge before scoring the round.', 'warn');
+    return;
+  }
+  const missing = state.teams.filter(team=>r.treeSubs[team.id]===undefined || r.treeSubs[team.id]===null);
+  if(missing.length){
+    toast('Enter folded tree totals for every team before scoring.', 'warn');
+    return;
+  }
   state.teams.forEach(team=>{
-    const op = computeOperationalForRound(team, round);
-    r.results[team.id] = op;
+    const base = computeOperationalForRound(team, round);
+    const trees = Number(r.treeSubs[team.id]);
+    const multiplier = treeMultiplier(trees);
+    r.treeResults[team.id] = { trees, base, multiplier, band:treeBandLabel(trees), score:Math.round(base*multiplier) };
+    r.results[team.id] = r.treeResults[team.id].score;
   });
   r.status = 'scored';
   recomputeAllScores();
@@ -1076,8 +1326,8 @@ function phaseLabel(){
   return 'Phase 3 · Round '+state.session.currentRound+' / '+state.session.numRounds;
 }
 
-function skillBar(label, val){
-  return '<div class="skillbar"><div class="lbl">'+label+'</div><div class="track"><div class="fill" style="height:'+val+'%"></div></div><div class="val">'+val+'</div></div>';
+function skillBar(label, val, specialty){
+  return '<div class="skillbar'+(specialty?' specialty':'')+'"><div class="lbl">'+label+(specialty?' ★':'')+'</div><div class="track"><div class="fill" style="height:'+val+'%"></div></div><div class="val">'+val+'</div></div>';
 }
 
 function talentCardMarket(t, team){
@@ -1093,9 +1343,9 @@ function talentCardMarket(t, team){
   const badgeClass = t.tier==='Gold' ? 'badge-gold' : 'badge-silver';
   return '<div class="talent-card'+(taken?' taken':'')+'">'
     +'<div class="talent-top"><div><div class="talent-name">'+esc(t.name)+'</div>'
-    +'<span class="badge '+badgeClass+'">'+t.tier+'</span></div>'
+    +'<span class="badge '+badgeClass+'">'+t.tier+'</span>'+(t.specialty?'<div class="small" style="color:var(--amber);margin-top:4px;">Specialty: '+esc(AREA_NAMES[t.specialty])+' ('+t.specialty+')</div>':'')+'</div>'
     +'<div class="mono" style="text-align:right"><div style="font-size:15px;font-weight:700;">'+t.cost+'</div><div class="dimmer" style="font-size:9px;">COINS</div></div></div>'
-    +'<div class="skillbars">'+AREAS.map(a=>skillBar(a,t.skills[a])).join('')+'</div>'
+    +'<div class="skillbars">'+AREAS.map(a=>skillBar(a,t.skills[a],t.specialty===a)).join('')+'</div>'
     +(taken
       ? '<div class="small dim">Recruited by '+esc((state.teams.find(x=>x.id===t.recruitedBy)||{}).name||'another team')+'</div>'
       : '<button class="btn btn-amber btn-sm" '+(disableReason?'disabled':'')+' onclick="recruitTalent(\''+t.id+'\')">'+(disableReason||'Recruit')+'</button>')
@@ -1133,6 +1383,22 @@ function boardPlacementsForTeam(team, round){
   return placements;
 }
 
+function validateDraftPlacements(team, placements){
+  const assigned = Object.values(placements).filter(Boolean);
+  if(assigned.length !== AREAS.length){
+    return { valid:false, reason:'Place one talent in each work area (A–E) before locking.' };
+  }
+  if(new Set(assigned).size !== assigned.length){
+    return { valid:false, reason:'Each talent can only be assigned to one work area.' };
+  }
+  const rosterIds = new Set(team.roster || []);
+  const invalid = assigned.filter(id => !rosterIds.has(id));
+  if(invalid.length){
+    return { valid:false, reason:'All assigned talents must come from the team roster.' };
+  }
+  return { valid:true };
+}
+
 // Draft placements kept in a transient (non-persisted) object while a team is arranging,
 // so nothing commits until "Lock Assignment" is pressed.
 window.__draft = window.__draft || {};
@@ -1154,10 +1420,22 @@ function onDropZone(ev, area){
   const round = state.session.currentRound;
   const key = team.id+'_'+round;
   const draft = draftFor(team.id, round);
+  const talentId = dragTalentId;
   // remove talent from any other area first
-  Object.keys(draft).forEach(a=>{ if(draft[a]===dragTalentId) delete draft[a]; });
-  // if area occupied, swap it back to tray (delete it)
-  draft[area] = dragTalentId;
+  Object.keys(draft).forEach(a=>{ if(draft[a]===talentId) delete draft[a]; });
+  // if the target area is already occupied by another talent, remove that one so the draft stays valid
+  const existingTalentId = draft[area];
+  if(existingTalentId && existingTalentId !== talentId){
+    delete draft[area];
+  }
+  draft[area] = talentId;
+  const validation = validateDraftPlacements(team, draft);
+  if(!validation.valid){
+    delete draft[area];
+    if(existingTalentId && existingTalentId !== talentId){ draft[area] = existingTalentId; }
+    toast(validation.reason, 'warn');
+    return;
+  }
   window.__draft[key] = draft;
   dragTalentId = null;
   render();
@@ -1181,8 +1459,11 @@ function lockPlanningBoard(){
   const round = state.session.currentRound;
   const key = team.id+'_'+round;
   const draft = draftFor(team.id, round);
-  const filled = AREAS.filter(a=>draft[a]).length;
-  if(filled < AREAS.length){ toast('Place all 5 talents into Areas A–E before locking.','warn'); return; }
+  const validation = validateDraftPlacements(team, draft);
+  if(!validation.valid){
+    toast(validation.reason, 'warn');
+    return;
+  }
   // remove any existing assignment rows for this team/round then commit fresh
   state.assignments = state.assignments.filter(a=>!(a.teamId===team.id && a.round===round));
   commitAssignment(team, round, draft);
@@ -1259,14 +1540,15 @@ function renderTeamDashboard(team){
     +'<div class="grid grid-3">'
       +'<div class="panel"><div class="panel-head"><h3>Budget</h3></div><div class="mono" style="font-size:28px;font-weight:700;">'+team.budget+'</div><div class="dim small">coins available to spend</div></div>'
       +'<div class="panel"><div class="panel-head"><h3>Roster</h3></div><div class="mono" style="font-size:28px;font-weight:700;">'+team.roster.length+'/5</div><div class="dim small">1 Gold + 4 Silver target · shared by up to '+state.session.playersPerTeam+' players</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Final Score</h3></div><div class="mono" style="font-size:28px;font-weight:700;color:var(--amber);">'+team.final+'</div><div class="dim small">40% Op · 40% Ready · 20% Complementary</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Final Score</h3></div><div class="mono" style="font-size:28px;font-weight:700;color:var(--amber);">'+team.final+'</div><div class="dim small">40% final-round proportional Operational + Multiplier · 40% Readiness · 20% Complementary</div></div>'
     +'</div>'
     +'<div class="panel">'
     +'<div class="panel-head"><h3>Phase Progress</h3><span class="hint">'+phaseLabel()+'</span></div>'
     +'<table><tbody>'
     +'<tr><td>EVP presentation</td><td>'+(state.phaseStatus.evp==='open'?'<span class="badge badge-warn">In progress</span>':state.phaseStatus.evp==='closed'?'<span class="badge badge-open">Evaluated</span>':'<span class="badge badge-locked">Pending</span>')+'</td></tr>'
     +'<tr><td>Roster complete</td><td>'+(team.roster.length>=5?'<span class="badge badge-open">Complete</span>':'<span class="badge badge-locked">'+team.roster.length+'/5</span>')+'</td></tr>'
-    +state.rounds.map(r=>'<tr><td>Round '+r.number+' assignment</td><td>'+(r.teamSubs[team.id]?'<span class="badge badge-open">Locked</span>':(r.status==='open'?'<span class="badge badge-warn">Open</span>':'<span class="badge badge-locked">Locked / N-A</span>'))+'</td></tr>').join('')
+    +state.rounds.map(r=>'<tr><td>Round '+r.number+' assignment</td><td>'+(r.teamSubs[team.id]?'<span class="badge badge-open">Locked</span>':(r.status==='open'?'<span class="badge badge-warn">Open</span>':'<span class="badge badge-locked">Locked / N-A</span>'))+'</td></tr>'
+      + (r.teamSubs[team.id] ? '<tr><td>Round '+r.number+' tree folding</td><td>'+(r.treeSubs[team.id]!==undefined?'<span class="badge badge-open">'+r.treeSubs[team.id]+' submitted</span>':r.folding.status==='running'?'<span class="badge badge-warn">In progress</span>':r.folding.status==='ended'?'<span class="badge badge-danger">Submit now closed</span>':'<span class="badge badge-locked">Awaiting start</span>')+'</td></tr>' : '')).join('')
     +'</tbody></table></div>'
     +(state.gameClosed ? '<div class="panel" style="border-color:var(--amber);"><div class="panel-head"><h3>Session Result</h3></div>'
       + (state.winnerTeamId===team.id ? '<div style="font-size:18px;color:var(--amber);font-weight:700;">🏆 '+esc(team.name)+' wins the simulation.</div>' : '<div>Winner: <strong>'+esc((state.teams.find(t=>t.id===state.winnerTeamId)||{}).name||'—')+'</strong></div>')
@@ -1299,7 +1581,7 @@ function renderEVPWorkspace(team){
     +'<div class="kv"><span>Multiplier</span><span class="mono">×'+state.session.evpMultiplier+' coins per point</span></div>'
     +'<div class="kv"><span>Evaluation</span><span class="badge badge-warn">Judges score after presentation</span></div>'
     +presentationStatus
-    +'</div></div>';
+     +'</div></div>';
 }
 
 function renderMarketplace(team){
@@ -1356,7 +1638,7 @@ function renderPlanningBoard(team){
       +'<div class="area-head"><span>'+AREA_NAMES[a]+'</span></div>'
       +'<div class="area-body" ondragover="onDragOverZone(event)" ondragleave="onDragLeaveZone(event)" ondrop="onDropZone(event,\''+a+'\')">'
       +(talent
-        ? '<div class="tray-card" draggable="'+(locked?'false':'true')+'" ondragstart="onDragStart(event,\''+talent.id+'\')"><div class="talent-name small">'+esc(talent.name)+'</div><div class="placement-attributes">'
+        ? '<div class="tray-card" draggable="'+(locked?'false':'true')+'" ondragstart="onDragStart(event,\''+talent.id+'\')"><div class="talent-name small">'+esc(talent.name)+'</div>'+(talent.specialty?'<div class="small" style="color:var(--amber);">Specialty: '+esc(AREA_NAMES[talent.specialty])+'</div>':'')+'<div class="placement-attributes">'
           +AREAS.map(workArea=>'<div class="placement-attribute'+(workArea===a?' active':'')+'"><span>'+AREA_NAMES[workArea]+'</span><span class="mono">'+talent.skills[workArea]+'</span></div>').join('')
           +'</div></div>'
         : '<div class="area-empty">Drop talent here</div>')
@@ -1376,19 +1658,33 @@ function renderPlanningBoard(team){
 
 function renderOpsDashboard(team){
   const scored = state.rounds.filter(r=>r.status==='scored');
+  const round = state.rounds[state.session.currentRound-1];
+  const control = foldingControl();
+  const foldingPanel = round && round.status==='open' && round.teamSubs[team.id]
+    ? '<div class="panel"><div class="panel-head"><h3>Origami Tree Challenge</h3><span class="hint">Budget '+control.budget+' trees</span></div>'
+      +'<p class="dim small">Fold trees from the onsite blueprint. Your result changes this round\'s operational score: '+control.belowMultiplier+'× below '+control.underTargetMax+', '+control.neutralMultiplier+'× neutral, '+control.targetMultiplier+'× budget achieved, '+control.overachieveMultiplier+'× overachieved, '+control.exceedMultiplier+'× exceeded.</p>'
+      +(round.folding.status==='running'
+        ? '<div class="timer-box warn" style="margin:12px 0;"><div class="label">Folding time remaining</div><div class="value" id="foldingTimer">'+formatTimer(timerRemaining(round.folding.endsAt))+'</div></div>'
+          +'<div class="row"><div class="field"><label>Folded trees</label><input type="number" min="0" id="treeCountInput" value="'+(round.treeSubs[team.id]??'')+'"></div><button class="btn btn-amber" style="margin-top:20px;" onclick="submitTreeCount(document.getElementById(\'treeCountInput\').value)">Submit Tree Count</button></div>'
+        : round.treeSubs[team.id]!==undefined
+          ? '<span class="badge badge-open">'+round.treeSubs[team.id]+' trees submitted — '+treeBandLabel(round.treeSubs[team.id])+'</span>'
+          : '<span class="badge badge-locked">Folding has not started</span>')
+      +'</div>' : '';
   return '<div class="stack">'
-    +'<div class="grid grid-3">'
-      +'<div class="panel"><div class="panel-head"><h3>Operational</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.operational+'</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Readiness</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.readiness+'</div></div>'
+    +'<div class="grid grid-4">'
+      +'<div class="panel"><div class="panel-head"><h3>Operational</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.rawOperational+'</div><div class="dim small">before folding multiplier</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Operational + Multiplier</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.operational+'</div><div class="dim small">operational × folding multiplier</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Readiness</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.readiness+'</div><div class="dim small">growth + rotation + succession</div></div>'
       +'<div class="panel"><div class="panel-head"><h3>Complementary</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.complementary+'</div></div>'
-    +'</div>'
+    +'</div>'+foldingPanel
     +'<div class="panel"><div class="panel-head"><h3>Round Results</h3></div>'
-    +(scored.length ? '<table><thead><tr><th>Round</th><th>Operational</th></tr></thead><tbody>'
-      +scored.map(r=>'<tr><td>Round '+r.number+'</td><td class="mono">'+(r.results[team.id]!==undefined?r.results[team.id]:'—')+'</td></tr>').join('')
+    +(scored.length ? '<table><thead><tr><th>Round</th><th>Operational</th><th>Trees</th><th>Multiplier</th><th>Operational + Multiplier</th></tr></thead><tbody>'
+      +scored.map(r=>'<tr><td>Round '+r.number+'</td><td class="mono">'+(r.treeResults[team.id]?r.treeResults[team.id].base:'—')+'</td><td class="mono">'+(r.treeResults[team.id]?r.treeResults[team.id].trees:'—')+'</td><td class="mono">'+(r.treeResults[team.id]?'×'+r.treeResults[team.id].multiplier:'—')+'</td><td class="mono">'+(r.results[team.id]!==undefined?r.results[team.id]:'—')+'</td></tr>').join('')
       +'</tbody></table>' : '<p class="dim small">No rounds scored yet.</p>')
     +'</div>'
-    +'<div class="panel"><div class="panel-head"><h3>Talent Learning</h3></div><table><thead><tr><th>Talent</th><th>Tier</th><th>Learning</th></tr></thead><tbody>'
-    +teamRoster(team).map(t=>'<tr><td>'+esc(t.name)+(t.active?'':' <span class="badge badge-danger">inactive</span>')+'</td><td><span class="badge '+(t.tier==='Gold'?'badge-gold':'badge-silver')+'">'+t.tier+'</span></td><td><div class="progress-track" style="width:120px;"><div class="progress-fill" style="width:'+t.learning+'%"></div></div><span class="mono small">'+t.learning+'/100</span></td></tr>').join('')
+    +'<div class="panel"><div class="panel-head"><h3>Talent Development</h3><span class="hint">Current skill vs original baseline</span></div><p class="dim small" style="margin-bottom:12px;">Each value shows the original attribute, current attribute, and the increment gained through development.</p><div class="table-wrap"><table><thead><tr><th>Talent</th><th>Tier</th>'+AREAS.map(a=>'<th>'+a+' · '+AREA_NAMES[a]+'</th>').join('')+'</tr></thead><tbody>'
+    +teamRoster(team).map(t=>'<tr><td>'+esc(t.name)+(t.active?'':' <span class="badge badge-danger">inactive</span>')+'</td><td><span class="badge '+(t.tier==='Gold'?'badge-gold':'badge-silver')+'">'+t.tier+'</span></td>'+AREAS.map(a=>{ const original=Number(t.originalSkills&&t.originalSkills[a]!==undefined?t.originalSkills[a]:t.skills[a])||0; const current=Number(t.skills[a])||0; const increment=current-original; return '<td><span class="mono">'+original+' → '+current+'</span> <strong style="color:'+(increment>0?'var(--green)':'var(--text-3)')+';">('+(increment>=0?'+':'')+increment+')</strong></td>'; }).join('')+'</tr>').join('')
+    +'</tbody></table></div></div></div>';
     +'</tbody></table></div></div>';
 }
 
@@ -1418,12 +1714,12 @@ function renderLeaderboardScreen(team){
 
 function renderLeaderboardTable(){
   const ranked = [...state.teams].sort((a,b)=>b.final-a.final);
-  return '<div class="panel"><div class="panel-head"><h3>Leaderboard</h3><span class="hint">40% Operational · 40% Readiness · 20% Complementary</span></div>'
+  return '<div class="panel"><div class="panel-head"><h3>Leaderboard</h3><span class="hint">40% final-round proportional Operational + Multiplier · 40% Readiness · 20% Complementary</span></div>'
     +ranked.map((t,i)=>{
       return '<div class="lb-row">'
-        +'<div class="lb-rank'+(i===0?' top':'')+'">'+(i+1)+'</div>'
+        +'<div class="lb-rank '+(i===0?'gold':i===1?'silver':i===2?'bronze':'')+'">'+(i+1)+'</div>'
         +'<div><span class="color-dot" style="background:'+t.color+'"></span> '+esc(t.name)+(state.winnerTeamId===t.id?' 🏆':'')+'</div>'
-        +'<div class="lb-score"><div class="num">'+t.operational+'</div><div class="lbl">Operational</div></div>'
+        +'<div class="lb-score"><div class="num">'+t.operational+'</div><div class="lbl">Operational + Multiplier</div></div>'
         +'<div class="lb-score"><div class="num">'+t.readiness+'</div><div class="lbl">Readiness</div></div>'
         +'<div class="lb-score"><div class="num">'+t.complementary+'</div><div class="lbl">Complementary</div></div>'
         +'<div class="lb-score"><div class="num" style="color:var(--amber);font-size:18px;">'+t.final+'</div><div class="lbl">Final</div></div>'
@@ -1489,6 +1785,20 @@ function renderAdminTeams(){
     +'<div class="field"><label>EVP → Coin Multiplier</label><input type="number" value="'+state.session.evpMultiplier+'" onchange="updateSessionField(\'evpMultiplier\',parseFloat(this.value)||1)"></div>'
     +'<div class="field"><label>Number of Judges</label><input type="number" min="'+MIN_JUDGES+'" max="'+MAX_JUDGES+'" value="'+judgeCount()+'" onchange="setJudgeCount(this.value)"></div>'
     +'<div class="field"><label>Rounds</label><input type="number" min="'+MIN_ROUNDS+'" max="'+MAX_ROUNDS+'" value="'+state.session.numRounds+'" onchange="updateSessionRounds(this.value)"></div>'
+    +'</div></div>'
+    +'<div class="panel"><div class="panel-head"><h3>Origami Tree Challenge Settings</h3><span class="hint">Applied to every round</span></div>'
+    +'<div class="grid grid-3">'
+    +'<div class="field"><label>Folding time (minutes)</label><input type="number" min="1" max="60" value="'+foldingControl().minutes+'" onchange="setFoldingSetting(\'minutes\',this.value)"></div>'
+    +'<div class="field"><label>Tree budget</label><input type="number" min="0" value="'+foldingControl().budget+'" onchange="setFoldingSetting(\'budget\',this.value)"></div>'
+    +'<div class="field"><label>Below-target max trees</label><input type="number" min="0" value="'+foldingControl().underTargetMax+'" onchange="setFoldingSetting(\'underTargetMax\',this.value)"></div>'
+    +'<div class="field"><label>Budget achieved minimum</label><input type="number" min="0" value="'+foldingControl().targetMin+'" onchange="setFoldingSetting(\'targetMin\',this.value)"></div>'
+    +'<div class="field"><label>Budget achieved maximum</label><input type="number" min="0" value="'+foldingControl().targetMax+'" onchange="setFoldingSetting(\'targetMax\',this.value)"></div>'
+    +'<div class="field"><label>Overachieved maximum</label><input type="number" min="0" value="'+foldingControl().overachieveMax+'" onchange="setFoldingSetting(\'overachieveMax\',this.value)"></div>'
+    +'<div class="field"><label>Below-target multiplier</label><input type="number" min="0" step="0.1" value="'+foldingControl().belowMultiplier+'" onchange="setFoldingSetting(\'belowMultiplier\',this.value)"></div>'
+    +'<div class="field"><label>Neutral multiplier</label><input type="number" min="0" step="0.1" value="'+foldingControl().neutralMultiplier+'" onchange="setFoldingSetting(\'neutralMultiplier\',this.value)"></div>'
+    +'<div class="field"><label>Budget multiplier</label><input type="number" min="0" step="0.1" value="'+foldingControl().targetMultiplier+'" onchange="setFoldingSetting(\'targetMultiplier\',this.value)"></div>'
+    +'<div class="field"><label>Overachieve multiplier</label><input type="number" min="0" step="0.1" value="'+foldingControl().overachieveMultiplier+'" onchange="setFoldingSetting(\'overachieveMultiplier\',this.value)"></div>'
+    +'<div class="field"><label>Exceed multiplier</label><input type="number" min="0" step="0.1" value="'+foldingControl().exceedMultiplier+'" onchange="setFoldingSetting(\'exceedMultiplier\',this.value)"></div>'
     +'</div></div>';
 }
 function updateSessionField(field,val){ state.session[field]=val; persistAndRender(); }
@@ -1501,7 +1811,7 @@ function updateSessionRounds(value){
     return;
   }
   state.session.numRounds = numRounds;
-  state.rounds = Array.from({length:numRounds}, (_,i)=>({ number:i+1, status:'locked', teamSubs:{}, results:{}, bonus:{} }));
+  state.rounds = Array.from({length:numRounds}, (_,i)=>({ number:i+1, status:'locked', teamSubs:{}, results:{}, treeResults:{}, treeSubs:{}, bonus:{}, folding:{status:'locked', endsAt:null} }));
   persistAndRender();
 }
 
@@ -1540,6 +1850,15 @@ function renderAdminPhases(){
       +'<button class="btn btn-green btn-phase-action" onclick="closeEVPApplyScores()">Apply Scores &amp; Close EVP</button>';
   } else {
     html += '<p class="dim small">Closed. Budgets applied to all teams.</p>';
+    const dart = evpControl().dartRound;
+    const dartOptions = '<option value="">Select result</option><option value="0">Miss — 0 coins</option><option value="10">Outer circle — 10 coins</option><option value="20">Inner circle — 20 coins</option><option value="30">Bullseye — 30 coins</option>';
+    const finalThrows = state.teams.filter(team=>dart.throws[team.id+'_2']!==undefined).length;
+    html += '<div class="panel dart-panel"><div class="panel-head"><h3>Bonus Round — Dart Challenge</h3><span class="badge '+(dart.status==='closed'?'badge-open':'badge-warn')+'">'+(dart.status==='closed'?'Complete':'Awaiting throws')+'</span></div>'
+      +'<p class="dim small">Each team throws three times. Throws 1 and 2 are practice; only throw 3 awards marketplace budget.</p>'
+      +'<div class="dart-legend"><span>Practice: no budget impact</span><span>Final: +10 / +20 / +30 coins</span></div>'
+      +'<div class="table-wrap"><table><thead><tr><th>Team</th><th>Practice 1</th><th>Practice 2</th><th>Final throw</th><th>Bonus</th></tr></thead><tbody>'
+      +state.teams.map(team=>{ const bonus=Number(team.dartBonus)||0; return '<tr><td><strong>'+esc(team.name)+'</strong></td>'+[0,1,2].map(i=>'<td><select '+(dart.status==='closed'?'disabled':'')+' onchange="recordDartThrow(\''+team.id+'\','+i+',this.value)">'+dartOptions.replace('value="'+(dart.throws[team.id+'_'+i]??'')+'"','value="'+(dart.throws[team.id+'_'+i]??'')+'" selected')+'</select></td>').join('')+'<td class="mono">'+(dart.throws[team.id+'_2']!==undefined?'+'+bonus:'—')+'</td></tr>'; }).join('')
+      +'</tbody></table></div><div class="tree-entry-footer"><span class="dim small">'+(dart.status==='closed'?'All final throws recorded. Marketplace planning is now available.':'Record the final throw for every team to finish the bonus round.')+'</span><span class="mono small">'+finalThrows+'/'+state.teams.length+' final</span></div></div>';
   }
   html += '</div>';
 
@@ -1554,6 +1873,8 @@ function renderAdminPhases(){
     html += '<p class="dim small">Budgets are allocated. Teams can review the Marketplace and plan their selections before recruitment opens.</p>';
     if(state.phaseStatus.evp!=='closed'){
       html += '<span class="badge badge-locked">Awaiting EVP scores</span>';
+    } else if(evpControl().dartRound.status!=='closed'){
+      html += '<span class="badge badge-locked">Complete the Dart Challenge before marketplace planning</span>';
     } else if(planning.planningStatus==='running'){
       html += '<div class="phase-control-stack"><div class="timer-box warn"><div class="label">Marketplace planning remaining</div><div class="value" id="marketplacePlanningTimer">'+formatTimer(timerRemaining(planning.planningEndsAt))+'</div></div>'
         +'<button class="btn btn-red" onclick="endMarketplacePlanningTimer()">End Planning Early</button></div>';
@@ -1570,16 +1891,39 @@ function renderAdminPhases(){
     state.rounds.forEach(r=>{
       const isCurrent = r.number===state.session.currentRound;
       html += '<div class="panel"><div class="panel-head"><h3>Round '+r.number+'</h3><span class="badge '+(r.status==='scored'?'badge-open':r.status==='open'?'badge-warn':'badge-locked')+'">'+r.status+'</span></div>';
+      const locked = state.teams.filter(t=>r.teamSubs[t.id]).length;
+      const submitted = Object.keys(r.treeSubs||{}).length;
+      const foldingDone = r.folding.status==='ended' || r.status==='scored';
+      const allSubmitted = submitted===state.teams.length;
+      html += '<div class="round-flow">'
+        +'<div class="round-flow-step '+(locked===state.teams.length?'done':r.status==='open'?'active':'')+'"><span class="step-number">1</span><span>Assignments<br><strong>'+locked+'/'+state.teams.length+' locked</strong></span></div>'
+        +'<div class="round-flow-step '+(foldingDone?'done':r.folding.status==='running'?'active':'')+'"><span class="step-number">2</span><span>Tree folding<br><strong>'+(!foldingDone&&r.folding.status==='running'?'In progress':foldingDone?'Complete':'Waiting')+'</strong></span></div>'
+        +'<div class="round-flow-step '+(allSubmitted?'done':foldingDone?'active':'')+'"><span class="step-number">3</span><span>Record results<br><strong>'+submitted+'/'+state.teams.length+' submitted</strong></span></div>'
+        +'</div>';
       if(isCurrent && r.status==='open'){
-        const locked = state.teams.filter(t=>r.teamSubs[t.id]).length;
-        html += '<p class="dim small">Assignments locked: '+locked+'/'+state.teams.length+'</p>'
-          +'<button class="btn btn-cyan" onclick="scoreCurrentRound()">Score Round '+r.number+'</button>';
+          if(r.folding.status!=='locked'){
+            html += '<div class="panel tree-entry-panel"><div class="panel-head"><h3>Record folded trees</h3><span class="badge '+(allSubmitted?'badge-open':'badge-warn')+'">'+submitted+'/'+state.teams.length+' complete</span></div>'
+              +'<p class="dim small">Enter the final count from each team&rsquo;s onsite worksheet. Each value saves immediately.</p>'
+              +'<div class="tree-entry-grid">'
+              +state.teams.map(team=>{ const hasValue=r.treeSubs[team.id]!==undefined; return '<div class="tree-entry-card '+(hasValue?'complete':'')+'"><label for="trees-'+team.id+'">'+esc(team.name)+'</label><input id="trees-'+team.id+'" type="number" min="0" step="1" placeholder="0" value="'+(hasValue?r.treeSubs[team.id]:'')+'" onchange="recordTreeCountForTeam(\''+team.id+'\', this.value)" aria-label="'+esc(team.name)+' folded trees"></div>'; }).join('')
+              +'</div><div class="tree-entry-footer"><span class="dim small">'+(allSubmitted?'All teams are ready for scoring.':'Complete every team before scoring.')+'</span><span class="mono small">'+submitted+'/'+state.teams.length+'</span></div></div>';
+          }
+         if(r.folding.status==='locked'){
+          html += '<button class="btn btn-cyan" '+(locked<state.teams.length?'disabled':'')+' onclick="startFoldingRound()">Start '+foldingControl().minutes+'-Minute Tree Folding</button>';
+        } else if(r.folding.status==='running'){
+          html += '<div class="row"><div class="timer-box warn"><div class="label">Folding remaining</div><div class="value" id="foldingTimer">'+formatTimer(timerRemaining(r.folding.endsAt))+'</div></div><button class="btn btn-red" onclick="endFoldingRound()">End Folding Early</button></div>';
+        } else {
+          html += '<span class="badge badge-open">Folding complete</span> <button class="btn btn-cyan" '+(submitted<state.teams.length?'disabled':'')+' onclick="scoreCurrentRound()">Score Round '+r.number+'</button>';
+        }
       } else if(isCurrent && r.status==='scored'){
         html += '<p class="dim small">Round scored. Trigger disruptions if desired, then publish and advance.</p>'
           +'<div class="row"><button class="btn btn-green" onclick="publishLeaderboard()">Publish Leaderboard</button>'
           +'<button class="btn btn-amber" onclick="unlockNextRound()">'+(r.number<state.session.numRounds?'Unlock Round '+(r.number+1):'Close Session')+'</button></div>';
       } else if(r.status==='scored'){
-        html += '<p class="dim small">Score: '+state.teams.map(t=>esc(t.name)+' '+(r.results[t.id]??'—')).join(' · ')+'</p>';
+        html += '<div class="tree-entry-panel"><div class="panel-head"><h3>Folded trees recorded</h3><span class="badge badge-open">'+submitted+'/'+state.teams.length+' complete</span></div>'
+          +'<div class="tree-entry-grid">'
+          +state.teams.map(team=>'<div class="tree-entry-card complete"><label>'+esc(team.name)+'</label><span class="mono">'+(r.treeSubs[team.id]??'—')+' trees</span></div>').join('')
+          +'</div></div><p class="dim small" style="margin-top:12px;">Score: '+state.teams.map(t=>esc(t.name)+' '+(r.results[t.id]??'—')).join(' · ')+'</p>';
       } else {
         html += '<p class="dimmer small">Not yet reached.</p>';
       }
@@ -1612,11 +1956,11 @@ function renderAdminScoring(){
     }).join('')
     +'</tbody></table></div>';
 
-  html += '<div class="panel"><div class="panel-head"><h3>Round Production Results</h3><span class="hint">Auto-computed from skill fit; scored via Phases tab</span></div>';
+  html += '<div class="panel"><div class="panel-head"><h3>Round Production Results</h3><span class="hint">Operational × folding multiplier = operational + multiplier</span></div>';
   const scored = state.rounds.filter(r=>r.status==='scored');
   if(scored.length){
-    html += '<table><thead><tr><th>Team</th>'+scored.map(r=>'<th>Round '+r.number+'</th>').join('')+'<th>Operational Avg</th></tr></thead><tbody>'
-      +state.teams.map(t=>'<tr><td>'+esc(t.name)+'</td>'+scored.map(r=>'<td class="mono">'+(r.results[t.id]??'—')+'</td>').join('')+'<td class="mono" style="font-weight:700;">'+t.operational+'</td></tr>').join('')
+    html += '<table><thead><tr><th>Team</th>'+scored.map(r=>'<th>Round '+r.number+' Operational / Operational + Multiplier</th>').join('')+'<th>Operational</th><th>Operational + Multiplier</th></tr></thead><tbody>'
+      +state.teams.map(t=>'<tr><td>'+esc(t.name)+'</td>'+scored.map(r=>'<td class="mono">'+(r.treeResults[t.id]?r.treeResults[t.id].base+' / '+r.results[t.id]:(r.results[t.id]??'—'))+'</td>').join('')+'<td class="mono">'+t.rawOperational+'</td><td class="mono" style="font-weight:700;">'+t.operational+'</td></tr>').join('')
       +'</tbody></table>';
   } else {
     html += '<p class="dim small">No rounds scored yet.</p>';
