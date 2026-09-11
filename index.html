@@ -227,6 +227,114 @@ tr:last-child td{border-bottom:none;}
   display:grid;grid-template-columns:36px 1fr auto auto auto auto;gap:12px;align-items:center;
   padding:10px 12px;border-bottom:1px solid var(--line-soft);
 }
+.lb-row.facilitator{
+  grid-template-columns:28px minmax(100px,1.35fr) repeat(10,minmax(0,1fr));
+  gap:6px;
+  min-width:0;
+  padding-left:8px;padding-right:8px;
+}
+.lb-table-scroll{
+  width:100%;
+  overflow-x:hidden;
+}
+.lb-row.facilitator.lb-header{
+  padding-top:8px;padding-bottom:8px;
+  background:var(--g-900);
+  border-top:1px solid var(--line);
+  border-bottom:2px solid var(--cyan);
+}
+.lb-row.facilitator:not(.lb-header):nth-child(even){
+  background:rgba(255,255,255,.018);
+}
+.lb-row.facilitator:not(.lb-header):hover{
+  background:rgba(71,196,218,.07);
+}
+.lb-team-cell{
+  font-weight:600;
+  white-space:nowrap;
+}
+.lb-row.facilitator .lb-score{
+  padding:4px 3px;
+}
+.lb-header .lb-score{
+  text-align:right;
+}
+.lb-header .lb-score .lbl{
+  color:var(--text-1);
+  font-size:9px;
+  line-height:1.25;
+  white-space:normal;
+}
+.lb-header .lb-team-header{
+  color:var(--text-1);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.lb-highlight{
+  background:rgba(214,162,73,.11);
+  border-left:1px solid rgba(214,162,73,.28);
+  border-right:1px solid rgba(214,162,73,.28);
+}
+.lb-header.lb-highlight{
+  color:var(--amber);
+  border-bottom-color:var(--amber);
+}
+.lb-header.lb-highlight .lbl{color:var(--amber);}
+.lb-operational{
+  background:rgba(71,196,218,.10);
+  border-left:1px solid rgba(71,196,218,.28);
+  border-right:1px solid rgba(71,196,218,.28);
+}
+.lb-header.lb-operational{border-bottom-color:var(--cyan);}
+.lb-header.lb-operational .lbl{color:var(--cyan);}
+.lb-complementary{
+  background:rgba(163,125,201,.11);
+  border-left:1px solid rgba(163,125,201,.28);
+  border-right:1px solid rgba(163,125,201,.28);
+}
+.lb-header.lb-complementary{border-bottom-color:#A37DC9;}
+.lb-header.lb-complementary .lbl{color:#C7A8E5;}
+.lb-key-value .num{font-size:16px;}
+.lb-final-value .num{color:var(--amber);font-size:18px;}
+.lb-legend{
+  display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px;
+}
+.lb-legend span{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 7px;
+  border:1px solid var(--line-soft);border-radius:999px;
+  color:var(--text-2);font-size:10px;
+}
+.lb-legend i{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.lb-legend .operational i{background:var(--cyan);}
+.lb-legend .readiness i{background:var(--amber);}
+.lb-legend .complementary i{background:#A37DC9;}
+.lb-criteria{
+  margin:-2px 0 12px;padding:11px 13px;
+  border-left:2px solid var(--cyan);
+  background:rgba(71,196,218,.06);
+  color:var(--text-2);font-size:11px;line-height:1.45;
+}
+.lb-criteria strong{color:var(--text-1);}
+.lb-criteria-title{font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.05em;}
+.lb-criteria-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;}
+.lb-criteria-step{padding:7px 8px;background:var(--g-850);border:1px solid var(--line-soft);border-radius:var(--radius);}
+.lb-criteria-step b{display:block;color:var(--amber);font-family:var(--font-m);font-size:10px;margin-bottom:3px;}
+.lb-criteria-formula{padding:7px 9px;background:var(--g-950);border:1px solid var(--line);border-radius:var(--radius);font-family:var(--font-m);color:var(--text-1);}
+.lb-criteria-thresholds{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:8px;}
+.lb-criteria-threshold{padding:5px 4px;text-align:center;background:var(--g-850);border:1px solid var(--line-soft);border-radius:var(--radius);}
+.lb-criteria-threshold b{display:block;color:var(--amber);font-family:var(--font-m);}
+.lb-criteria-threshold span{display:block;color:var(--text-3);font-size:9px;}
+.lb-criteria.operational-guide{border-left-color:var(--cyan);background:rgba(71,196,218,.045);}
+.lb-operational-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0;}
+.lb-operational-step{padding:7px 8px;background:var(--g-850);border:1px solid var(--line-soft);border-radius:var(--radius);}
+.lb-operational-step b{display:block;color:var(--cyan);font-family:var(--font-m);font-size:10px;margin-bottom:3px;}
+.lb-operational-formula{padding:7px 9px;background:var(--g-950);border:1px solid var(--line);border-radius:var(--radius);font-family:var(--font-m);color:var(--text-1);}
+@media(max-width:700px){.lb-operational-steps{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){
+  .lb-criteria-steps,.lb-criteria-thresholds{grid-template-columns:1fr 1fr;}
+}
 .lb-rank{font-family:var(--font-m);font-weight:700;font-size:16px;color:var(--text-2);}
 .lb-rank.gold{color:var(--gold);}
 .lb-rank.silver{color:var(--silver);}
@@ -234,6 +342,12 @@ tr:last-child td{border-bottom:none;}
 .lb-score{font-family:var(--font-m);text-align:right;}
 .lb-score .num{font-size:15px;font-weight:700;}
 .lb-score .lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;}
+@media(max-width:900px){
+  .lb-row.facilitator{grid-template-columns:24px minmax(78px,1.2fr) repeat(10,minmax(0,1fr));gap:4px;padding-left:5px;padding-right:5px;}
+  .lb-row.facilitator .lb-score .num{font-size:12px;}
+  .lb-header .lb-score .lbl{font-size:8px;letter-spacing:0;}
+  .lb-header .lb-team-header{font-size:8px;}
+}
 
 /* ---------- events ---------- */
 .event-card{border:1px solid var(--line-soft);border-radius:var(--radius);padding:10px 12px;background:var(--g-850);display:flex;gap:12px;align-items:flex-start;}
@@ -246,6 +360,7 @@ input[type=text],input[type=number],input[type=password],select,textarea{
   font-size:13px;width:100%;
 }
 input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+ .input-like{background:var(--g-850);border:1px solid var(--line);color:var(--text-1);padding:8px 10px;border-radius:var(--radius);width:100%;}
 label{font-size:11px;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
 .field{margin-bottom:12px;}
 textarea{resize:vertical;min-height:120px;}
@@ -425,7 +540,7 @@ function buildTeams(n){
       id: 'team_'+(i+1), name:'Team '+String.fromCharCode(65+i), color: TEAM_COLORS[i%TEAM_COLORS.length],
       code: TEAM_CODES[i],
       budget:0, evpScore:null, evpJudgeTotals:[],
-      roster:[], operational:0, rawOperational:0, operationalPoints:0, readiness:0, complementary:0, final:0
+      roster:[], operational:0, rawOperational:0, operationalPoints:0, rawSkillGrowth:0, readiness:0, readinessBreakdown:{growth:0,rotation:0,succession:0}, readinessHistory:[], complementary:0, complementaryJudgeTotals:[], final:0
     });
   }
   return teams;
@@ -443,7 +558,7 @@ function freshState(numTeams, playersPerTeam, numRounds){
     rounds.push({ number:r, status:'locked', teamSubs:{}, results:{}, treeResults:{}, treeSubs:{}, bonus:{}, folding:{status:'locked', endsAt:null} });
   }
   return {
-    session:{ name:'Workforce Strategy Simulation', numRounds, evpMultiplier:3, numJudges:3, currentRound:0, numTeams, playersPerTeam },
+    session:{ name:'Workforce Strategy Simulation', numRounds, evpMultiplier:3, numJudges:3, skillGrowthBenchmark:800, currentRound:0, numTeams, playersPerTeam },
     evpControl:{ draftMinutes:20, presentationMinutes:3, planningMinutes:5, draftStatus:'idle', draftEndsAt:null, presentationOrder:[], presentationIndex:0, presentationStatus:'idle', presentationEndsAt:null, planningStatus:'idle', planningEndsAt:null, dartRound:{status:'locked',throws:{}} },
     foldingControl:{ minutes:10, budget:16, underTargetMax:9, targetMin:14, targetMax:16, overachieveMax:20, belowMultiplier:0.9, neutralMultiplier:1, targetMultiplier:1.1, overachieveMultiplier:1.2, exceedMultiplier:1.3 },
     role: null, // {type:'facilitator'} | {type:'team', teamId}
@@ -512,6 +627,9 @@ function normalizeTeamCodes(sessionState){
   sessionState.rounds = Array.isArray(sessionState.rounds) ? sessionState.rounds : Object.keys(sessionState.rounds || {}).map(function(key){ return sessionState.rounds[key]; });
   sessionState.assignments = Array.isArray(sessionState.assignments) ? sessionState.assignments : Object.keys(sessionState.assignments || {}).map(function(key){ return sessionState.assignments[key]; });
   sessionState.events = Array.isArray(sessionState.events) ? sessionState.events : Object.keys(sessionState.events || {}).map(function(key){ return sessionState.events[key]; });
+  sessionState.session.skillGrowthBenchmark = Number.isFinite(Number(sessionState.session.skillGrowthBenchmark))
+    ? Math.max(1, Number(sessionState.session.skillGrowthBenchmark))
+    : 800;
   sessionState.logs = Array.isArray(sessionState.logs) ? sessionState.logs : Object.keys(sessionState.logs || {}).map(function(key){ return sessionState.logs[key]; });
   sessionState.teams.forEach(function(team){
     team.roster = team.roster || [];
@@ -520,6 +638,15 @@ function normalizeTeamCodes(sessionState){
     team.evpJudgeTotals = Array.isArray(team.evpJudgeTotals) ? team.evpJudgeTotals : Object.keys(team.evpJudgeTotals || {}).map(function(key){ return team.evpJudgeTotals[key]; });
     team.rawOperational = Number.isFinite(Number(team.rawOperational)) ? Number(team.rawOperational) : 0;
     team.operationalPoints = Number.isFinite(Number(team.operationalPoints)) ? Number(team.operationalPoints) : 0;
+    team.rawSkillGrowth = Number.isFinite(Number(team.rawSkillGrowth)) ? Number(team.rawSkillGrowth) : 0;
+    team.complementaryJudgeTotals = Array.isArray(team.complementaryJudgeTotals)
+      ? team.complementaryJudgeTotals
+      : Object.keys(team.complementaryJudgeTotals || {}).map(function(key){ return team.complementaryJudgeTotals[key]; });
+    team.complementaryJudgeTotals = team.complementaryJudgeTotals.slice(0,1);
+    team.readinessBreakdown = Object.assign({growth:0,rotation:0,succession:0}, team.readinessBreakdown || {});
+    team.readinessHistory = Array.isArray(team.readinessHistory)
+      ? team.readinessHistory
+      : Object.keys(team.readinessHistory || {}).map(function(key){ return team.readinessHistory[key]; });
   });
   sessionState.talents.forEach(function(talent){
     if(!talent.originalSkills || typeof talent.originalSkills!=='object'){
@@ -592,6 +719,7 @@ function initSharedSync(){
     firebase.auth().signInAnonymously().then(function(){
       sharedDb = firebase.database().ref('sessions/'+SHARED_SESSION_ID);
       sharedDb.on('value', function(snapshot){
+        if(applyingRemoteState) return;
         const remote = snapshot.val();
         if(!remote){
           save();
@@ -603,6 +731,7 @@ function initSharedSync(){
         state = normalizeTeamCodes(remote);
         state.role = localRole;
         state.ui = localUi;
+        recomputeAllScores();
         applyingRemoteState = false;
         render();
       }, function(error){
@@ -793,11 +922,27 @@ function commitAssignment(team, round, placements){
     talent.learning = Math.min(100, learningBefore + totalIncrement);
     state.assignments.push({
       id: uid('asg'), teamId: team.id, talentId, area, round,
-      exposureType: type, standardIncrement, exposureBonus, totalIncrement,
+      exposureType: type, skillBefore, standardIncrement, exposureBonus, totalIncrement,
       points: talent.learning - learningBefore
     });
     talent.history.push({round, area, standardIncrement, exposureBonus});
   });
+}
+
+function operationalSkillForAssignment(assignment){
+  const recordedSkill = Number(assignment.skillBefore);
+  if(Number.isFinite(recordedSkill)) return recordedSkill;
+  const talent = state.talents.find(t=>t.id===assignment.talentId);
+  if(!talent) return 0;
+  const original = Number(talent.originalSkills && talent.originalSkills[assignment.area]);
+  if(Number.isFinite(original)){
+    const priorGrowth = state.assignments
+      .filter(a=>a.teamId===assignment.teamId && a.talentId===assignment.talentId
+        && a.area===assignment.area && a.round<assignment.round)
+      .reduce((sum,a)=>sum+(Number.isFinite(Number(a.totalIncrement)) ? Number(a.totalIncrement) : (Number(a.points)||0)),0);
+    return original + priorGrowth;
+  }
+  return Math.max(0, (Number(talent.skills[assignment.area])||0) - (Number(assignment.totalIncrement)||0));
 }
 
 function computeOperationalForRound(team, round){
@@ -805,10 +950,9 @@ function computeOperationalForRound(team, round){
   if(asg.length===0) return 0;
   let sum = 0;
   asg.forEach(a=>{
-    const talent = state.talents.find(t=>t.id===a.talentId);
-    if(talent) sum += talent.skills[a.area];
+    sum += operationalSkillForAssignment(a);
   });
-  let score = sum; // cumulative score from each talent's assigned work-area attribute
+  let score = sum; // use the pre-development attribute; growth applies next round
   const bonus = state.rounds[round-1] && state.rounds[round-1].bonus[team.id] ? state.rounds[round-1].bonus[team.id] : 0;
   return Math.round(score + bonus);
 }
@@ -888,28 +1032,57 @@ function recordTreeCountForTeam(teamId, value){
   persistAndRender();
 }
 
+function totalSkillGrowthForTeam(team){
+  return state.assignments
+    .filter(a=>a.teamId===team.id)
+    .reduce((sum,a)=>sum+(Number.isFinite(Number(a.totalIncrement)) ? Number(a.totalIncrement) : (Number(a.points)||0)),0);
+}
+
 function computeReadiness(team){
   const roster = teamRoster(team);
   if(roster.length===0) return 0;
-  const assignments = state.assignments.filter(a=>a.teamId===team.id);
-  const averageSkillGrowth = assignments.reduce((sum,a)=>sum+(Number.isFinite(Number(a.totalIncrement)) ? Number(a.totalIncrement) : (Number(a.points)||0)),0) / roster.length;
   const scoredRounds = state.rounds.filter(r=>r.status==='scored');
-  let rotationBonus = 0;
+  const totalGrowth = totalSkillGrowthForTeam(team);
+  const rawGrowth = totalGrowth;
+  team.rawSkillGrowth = rawGrowth;
+  const growthBenchmark = Math.max(1,...state.teams.map(totalSkillGrowthForTeam));
+  const growth = Math.min(20, Math.max(0, rawGrowth / growthBenchmark * 20));
+  let rotation = 0;
+  const history = [];
   scoredRounds.forEach(round=>{
     const previousRound = round.number > 1 ? currentAssignmentsFor(team.id, round.number-1) : [];
     const currentRound = currentAssignmentsFor(team.id, round.number);
-    if(!previousRound.length || !currentRound.length) return;
+    let roundRotation = 0;
     const previousByTalent = {};
     previousRound.forEach(a=>{ previousByTalent[a.talentId] = a.area; });
     const rotated = currentRound.filter(a=>previousByTalent[a.talentId] && previousByTalent[a.talentId]!==a.area).length;
-    if(rotated > roster.length/2) rotationBonus += 5;
+    if(previousRound.length && currentRound.length && rotated > roster.length/2) roundRotation = 5;
+    const successionReady = roster.filter(t=>t.tier==='Silver' && AREAS.filter(area=>t.skills[area]>75).length>3).length;
+    const roundSuccession = successionReady>=3 ? 15 : successionReady===2 ? 10 : successionReady===1 ? 5 : 0;
+    history.push({
+      round:round.number,
+      rotationCount:rotated,
+      rotationBonus:roundRotation,
+      successionReady,
+      successionBonus:roundSuccession
+    });
   });
-  const successionReady = roster.filter(t=>t.tier==='Silver' && AREAS.filter(area=>t.skills[area]>75).length>3).length;
-  const successionBonus = successionReady>=3 ? 15 : successionReady===2 ? 10 : successionReady===1 ? 5 : 0;
-  return Math.min(40, Math.round(Math.min(20, averageSkillGrowth) + rotationBonus + successionBonus));
+  const transitionHistory = history.filter(entry=>entry.round>1);
+  const rotationQualified = transitionHistory.length>0 && transitionHistory.every(entry=>entry.rotationBonus===5);
+  rotation = rotationQualified ? 5 : 0;
+  const finalSuccessionReady = roster.filter(t=>t.tier==='Silver' && AREAS.filter(area=>t.skills[area]>75).length>3).length;
+  const succession = finalSuccessionReady>=3 ? 15 : finalSuccessionReady===2 ? 10 : finalSuccessionReady===1 ? 5 : 0;
+  const breakdown = {growth:Math.round(growth), rotation, succession};
+  team.readinessHistory = history;
+  team.readinessBreakdown = breakdown;
+  return Math.min(40, breakdown.growth + breakdown.rotation + breakdown.succession);
 }
 
 function computeComplementary(team){
+  const compiledScore = (team.complementaryJudgeTotals || [])[0];
+  if(compiledScore!=='' && compiledScore!==null && compiledScore!==undefined && Number.isFinite(Number(compiledScore))){
+    return Math.round(Number(compiledScore));
+  }
   const roster = teamRoster(team);
   if(roster.length===0) return 0;
   let sum = 0;
@@ -939,14 +1112,35 @@ function recomputeTeamScores(team){
 
 function recomputeAllScores(){
   state.teams.forEach(recomputeTeamScores);
-  const finalRound = state.rounds.filter(r=>r.status==='scored').slice(-1)[0];
-  const finalScores = state.teams.map(team=>finalRound && finalRound.results[team.id]!==undefined ? finalRound.results[team.id] : 0);
-  const highestFinalRoundScore = Math.max(0,...finalScores);
-  state.teams.forEach(team=>{
-    const score = finalRound && finalRound.results[team.id]!==undefined ? finalRound.results[team.id] : 0;
-    team.operationalPoints = highestFinalRoundScore > 0 ? (score / highestFinalRoundScore) * 40 : 0;
+  const operationalRanking = [...state.teams].sort((a,b)=>
+    b.operational-a.operational ||
+    b.rawOperational-a.rawOperational ||
+    a.name.localeCompare(b.name)
+  );
+  const operationalRange = operationalRanking.length > 1 ? 10 : 0;
+  operationalRanking.forEach((team,index)=>{
+    team.operationalPoints = Math.round(
+      40 - operationalRange * index / Math.max(1, operationalRanking.length - 1)
+    );
     team.final = calculateFinalScore(team);
   });
+}
+
+function setComplementaryJudgeTotal(teamId, judgeIndex, value){
+  const team = state.teams.find(t=>t.id===teamId);
+  if(!team || state.gameClosed) return;
+  if(!team.complementaryJudgeTotals) team.complementaryJudgeTotals = [];
+  if(value==='') team.complementaryJudgeTotals = [];
+  else team.complementaryJudgeTotals = [Math.max(0, Math.min(20, parseInt(value,10)||0))];
+  recomputeAllScores();
+  save();
+  const average = document.getElementById('complementaryAverage_'+teamId);
+  if(average) average.textContent = team.complementary;
+}
+
+function leaderboardCompare(a,b){
+  return b.final-a.final || b.operational-a.operational || b.rawOperational-a.rawOperational
+    || b.readiness-a.readiness || b.complementary-a.complementary || a.name.localeCompare(b.name);
 }
 
 /* ============================== DISRUPTION ENGINE ============================== */
@@ -1253,12 +1447,14 @@ function doApplyTeamConfig(n,p){
   const keepRounds = state.session.numRounds;
   const keepMultiplier = state.session.evpMultiplier;
   const keepJudges = judgeCount();
+  const keepSkillGrowthBenchmark = state.session.skillGrowthBenchmark;
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(LOCAL_DRAFT_KEY);
   state = freshState(n, p, keepRounds);
   state.session.name = keepName;
   state.session.evpMultiplier = keepMultiplier;
   state.session.numJudges = keepJudges;
+  state.session.skillGrowthBenchmark = keepSkillGrowthBenchmark;
   state.role = {type:'facilitator'};
   state.ui.route = 'admin';
   state.ui.adminTab = 'teams';
@@ -1296,10 +1492,10 @@ function seedSixTeamRehearsal(){
     doSeedSixTeamRehearsal
   );
 }
-function doSeedSixTeamRehearsal(){
+function doSeedSixTeamRehearsal(targetRounds){
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(LOCAL_DRAFT_KEY);
-  state = freshState(6, 6, state.session.numRounds);
+  state = freshState(6, 6, targetRounds || state.session.numRounds);
   state.role = {type:'facilitator'};
   state.ui.route = 'admin';
   state.ui.adminTab = 'phases';
@@ -1337,6 +1533,10 @@ function doSeedSixTeamRehearsal(){
   state.teams.forEach(function(team, teamIndex){
     const roster = [gold[teamIndex]].concat(silver.slice(teamIndex*4, teamIndex*4+4));
     roster.forEach(function(talent){
+      if(targetRounds && talent.tier==='Silver'){
+        AREAS.forEach(function(area){ talent.skills[area] = area===talent.specialty ? 76 : 68; });
+        talent.originalSkills = Object.assign({}, talent.skills);
+      }
       talent.recruitedBy = team.id;
       team.budget -= talent.cost;
       team.roster.push(talent.id);
@@ -1356,6 +1556,80 @@ function doSeedSixTeamRehearsal(){
   logAction('RehearsalSeed', null, 'Six-team rehearsal populated through Round 1 assignment locks');
   persistAndRender();
   toast('Six-team rehearsal loaded through locked Round 1 assignments.');
+}
+
+function seedSixTeamThroughRound2(){
+  askConfirm(
+    'Load Two-Round Rehearsal',
+    'This resets the session and fills all phase inputs through Round 2 scoring. Round 3 will remain locked and ready to unlock. Continue?',
+    doSeedSixTeamThroughRound2
+  );
+}
+function doSeedSixTeamThroughRound2(){
+  doSeedSixTeamRehearsal();
+  const roundOne = state.rounds[0];
+  roundOne.folding.status = 'ended';
+  state.teams.forEach(function(team, index){
+    roundOne.treeSubs[team.id] = [14, 16, 12, 18, 15, 20][index];
+  });
+  scoreCurrentRound();
+  unlockNextRound();
+
+  const roundTwo = state.rounds[1];
+  state.teams.forEach(function(team, teamIndex){
+    const placements = {};
+    const rotated = team.roster.slice().reverse();
+    rotated.forEach(function(talentId, areaIndex){
+      placements[AREAS[areaIndex]] = talentId;
+    });
+    commitAssignment(team, 2, placements);
+    roundTwo.teamSubs[team.id] = true;
+    roundTwo.treeSubs[team.id] = [16, 14, 18, 15, 20, 12][teamIndex];
+  });
+  roundTwo.folding.status = 'ended';
+  scoreCurrentRound();
+  state.session.currentRound = 2;
+  state.ui.adminTab = 'phases';
+  persistAndRender();
+  toast('Two-round rehearsal loaded. Round 3 is ready to unlock.');
+}
+
+function seedSixTeamFullRehearsal(){
+  askConfirm(
+    'Load Full-Session Rehearsal',
+    'This resets the session and completes all eight rounds with full phase data, deliberate mobility, and successor-ready talent development. The final round will be scored and ready to close. Continue?',
+    doSeedSixTeamFullRehearsal
+  );
+}
+function doSeedSixTeamFullRehearsal(){
+  applyingRemoteState = true;
+  doSeedSixTeamRehearsal(8);
+  for(let roundNumber=1; roundNumber<=state.session.numRounds; roundNumber++){
+    const round = state.rounds[roundNumber-1];
+    if(roundNumber>1) unlockNextRound();
+    state.teams.forEach(function(team, teamIndex){
+      if(roundNumber>1){
+        const placements = {};
+        team.roster.forEach(function(talentId, talentIndex){
+          placements[AREAS[(talentIndex+roundNumber-1)%AREAS.length]] = talentId;
+        });
+        commitAssignment(team, roundNumber, placements);
+        round.teamSubs[team.id] = true;
+      }
+      round.treeSubs[team.id] = [16, 14, 18, 15, 20, 12][(teamIndex+roundNumber-1)%6];
+    });
+    round.folding.status = 'ended';
+    scoreCurrentRound();
+  }
+  state.teams.forEach(function(team){
+    team.complementaryJudgeTotals = [16];
+  });
+  recomputeAllScores();
+  state.session.currentRound = state.session.numRounds;
+  state.ui.adminTab = 'phases';
+  applyingRemoteState = false;
+  persistAndRender();
+  toast('Eight-round rehearsal loaded. Final round scored and ready to close.');
 }
 
 /* ============================== AUTH / ROLE ============================== */
@@ -1629,7 +1903,7 @@ function renderTeamDashboard(team){
     +'<div class="grid grid-3">'
       +'<div class="panel"><div class="panel-head"><h3>Budget</h3></div><div class="mono" style="font-size:28px;font-weight:700;">'+team.budget+'</div><div class="dim small">coins available to spend</div></div>'
       +'<div class="panel"><div class="panel-head"><h3>Roster</h3></div><div class="mono" style="font-size:28px;font-weight:700;">'+team.roster.length+'/5</div><div class="dim small">1 Gold + 4 Silver target · shared by up to '+state.session.playersPerTeam+' players</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Final Score</h3></div><div class="mono" style="font-size:28px;font-weight:700;color:var(--amber);">'+team.final+'</div><div class="dim small">40% final-round proportional Operational + Multiplier · 40% Readiness · 20% Complementary</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Final Score</h3></div><div class="mono" style="font-size:28px;font-weight:700;color:var(--amber);">'+team.final+'</div><div class="dim small">40% cumulative normalized Operational + Multiplier · 40% Readiness · 20% Complementary</div></div>'
     +'</div>'
     +'<div class="panel">'
     +'<div class="panel-head"><h3>Phase Progress</h3><span class="hint">'+phaseLabel()+'</span></div>'
@@ -1748,6 +2022,11 @@ function renderPlanningBoard(team){
 function renderOpsDashboard(team){
   const scored = state.rounds.filter(r=>r.status==='scored');
   const round = state.rounds[state.session.currentRound-1];
+  const developmentAssignments = state.assignments.filter(a=>a.teamId===team.id);
+  const skillGrowth = developmentAssignments.reduce((sum,a)=>sum+(Number.isFinite(Number(a.totalIncrement)) ? Number(a.totalIncrement) : (Number(a.points)||0)),0);
+  const readinessHistory = team.readinessHistory || [];
+  const talentMobility = readinessHistory.reduce((sum,entry)=>sum+(Number(entry.rotationCount)||0),0);
+  const latestSuccession = readinessHistory.length ? readinessHistory[readinessHistory.length-1].successionReady : 0;
   const control = foldingControl();
   const foldingPanel = round && round.status==='open' && round.teamSubs[team.id]
     ? '<div class="panel"><div class="panel-head"><h3>Origami Tree Challenge</h3><span class="hint">Budget '+control.budget+' trees</span></div>'
@@ -1761,10 +2040,10 @@ function renderOpsDashboard(team){
       +'</div>' : '';
   return '<div class="stack">'
     +'<div class="grid grid-4">'
-      +'<div class="panel"><div class="panel-head"><h3>Operational</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.rawOperational+'</div><div class="dim small">before folding multiplier</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Operational + Multiplier</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.operational+'</div><div class="dim small">operational × folding multiplier</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Readiness</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.readiness+'</div><div class="dim small">growth + rotation + succession</div></div>'
-      +'<div class="panel"><div class="panel-head"><h3>Complementary</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.complementary+'</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Operational + Multiplier</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+team.operational+'</div><div class="dim small">cumulative score after folding multipliers</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Skill Growth</h3></div><div class="mono" style="font-size:26px;font-weight:700;">+'+skillGrowth+'</div><div class="dim small">total development increment</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Talent Mobility</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+talentMobility+'</div><div class="dim small">goal: rotate at least '+(Math.floor(teamRoster(team).length/2)+1)+' of '+teamRoster(team).length+' talents between consecutive rounds</div></div>'
+      +'<div class="panel"><div class="panel-head"><h3>Successor Identified?</h3></div><div class="mono" style="font-size:26px;font-weight:700;">'+latestSuccession+'</div><div class="dim small">goal: Silver talent with skill &gt;75 in 4+ areas · 1=+5, 2=+10, 3+=+15</div></div>'
     +'</div>'+foldingPanel
     +'<div class="panel"><div class="panel-head"><h3>Round Results</h3></div>'
     +(scored.length ? '<table><thead><tr><th>Round</th><th>Operational</th><th>Trees</th><th>Multiplier</th><th>Operational + Multiplier</th></tr></thead><tbody>'
@@ -1802,8 +2081,8 @@ function renderLeaderboardScreen(team){
 }
 
 function renderLeaderboardTable(){
-  const ranked = [...state.teams].sort((a,b)=>b.final-a.final);
-  return '<div class="panel"><div class="panel-head"><h3>Leaderboard</h3><span class="hint">40% final-round proportional Operational + Multiplier · 40% Readiness · 20% Complementary</span></div>'
+  const ranked = [...state.teams].sort(leaderboardCompare);
+  return '<div class="panel"><div class="panel-head"><h3>Leaderboard</h3><span class="hint">40% cumulative proportional Operational + Multiplier · 40% Readiness · 20% Complementary</span></div>'
     +ranked.map((t,i)=>{
       return '<div class="lb-row">'
         +'<div class="lb-rank '+(i===0?'gold':i===1?'silver':i===2?'bronze':'')+'">'+(i+1)+'</div>'
@@ -1814,6 +2093,60 @@ function renderLeaderboardTable(){
         +'<div class="lb-score"><div class="num" style="color:var(--amber);font-size:18px;">'+t.final+'</div><div class="lbl">Final</div></div>'
         +'</div>';
     }).join('')
+    +'</div>';
+}
+
+function renderFacilitatorLeaderboardTable(){
+  const ranked = [...state.teams].sort(leaderboardCompare);
+  const growthBenchmark = Math.max(0,...state.teams.map(totalSkillGrowthForTeam));
+  const growthThreshold = function(points){
+    return growthBenchmark ? Math.ceil(growthBenchmark * points / 20) : 0;
+  };
+  const teamCount = state.teams.length;
+  const operationalStep = teamCount>1 ? 10 / (teamCount-1) : 0;
+  return '<div class="panel rubric-panel"><div class="panel-head"><h3>Rubric</h3><span class="hint">How the facilitator scores each team</span></div>'
+    +'<div class="lb-legend"><span class="operational"><i></i>Operational contribution</span><span class="readiness"><i></i>Readiness contribution</span><span class="complementary"><i></i>Judge score</span></div>'
+    +'<div class="lb-criteria operational-guide"><div class="lb-criteria-title">1 · Ranked Operational (40–30)</div>'
+      +'<div class="lb-operational-steps"><div class="lb-operational-step"><b>1 · Add rounds</b>Add each round&rsquo;s Operational + Multiplier score.</div><div class="lb-operational-step"><b>2 · Rank teams</b>Order teams from highest to lowest cumulative score.</div><div class="lb-operational-step"><b>3 · Award points</b>Rank 1 receives 40; the last rank receives 30.</div></div>'
+      +'<div class="lb-operational-formula">Ranked Operational = 40 &minus; (rank &minus; 1) &times; '+operationalStep.toFixed(2)+' points &nbsp;·&nbsp; '+teamCount+' teams &nbsp;·&nbsp; range 40–30</div>'
+      +'<div class="dim small" style="margin-top:6px;">If scores tie: compare Raw Operational, then team name. This keeps the ranking and point award consistent.</div>'
+    +'</div>'
+    +'<div class="lb-criteria"><div class="lb-criteria-title">2 · Ranked Skill Growth (maximum 20)</div>'
+      +'<div class="lb-criteria-steps"><div class="lb-criteria-step"><b>1 · Add increments</b>Add every development increment earned by the team&rsquo;s talents.</div><div class="lb-criteria-step"><b>2 · Find benchmark</b>The highest team total in this session is <strong>'+growthBenchmark+'</strong>.</div><div class="lb-criteria-step"><b>3 · Convert to points</b>The benchmark team receives the full 20 points.</div></div>'
+      +'<div class="lb-criteria-formula">Team total &divide; highest team total &times; 20 = Ranked Skill Growth</div>'
+      +'<div class="lb-criteria-thresholds"><div class="lb-criteria-threshold"><b>20 pts</b><span>&ge; '+growthThreshold(20)+' total</span></div><div class="lb-criteria-threshold"><b>15 pts</b><span>&ge; '+growthThreshold(15)+' total</span></div><div class="lb-criteria-threshold"><b>10 pts</b><span>&ge; '+growthThreshold(10)+' total</span></div><div class="lb-criteria-threshold"><b>5 pts</b><span>&ge; '+growthThreshold(5)+' total</span></div><div class="lb-criteria-threshold"><b>0 pts</b><span>0 total</span></div></div>'
+    +'</div></div>'
+    +'<div class="panel"><div class="panel-head"><h3>Facilitator Leaderboard</h3><span class="hint">Final score = operational + readiness + complementary</span></div>'
+    +'<div class="lb-table-scroll"><div class="lb-row facilitator lb-header">'
+      +'<div></div><div class="lb-team-header">Team</div>'
+      +'<div class="lb-score lb-operational"><div class="lbl">Ranked<br>Operational (40–30)</div></div>'
+      +'<div class="lb-score"><div class="lbl">Raw<br>Operational</div></div>'
+      +'<div class="lb-score"><div class="lbl">Operational<br>+ Multiplier</div></div>'
+      +'<div class="lb-score"><div class="lbl">Raw Total<br>Skill Growth</div></div>'
+      +'<div class="lb-score"><div class="lbl">Ranked Skill<br>Growth (20)</div></div>'
+      +'<div class="lb-score"><div class="lbl">Talent<br>Mobility</div></div>'
+      +'<div class="lb-score"><div class="lbl">Successor<br>Identified</div></div>'
+      +'<div class="lb-score lb-highlight"><div class="lbl">Total<br>Readiness</div></div>'
+      +'<div class="lb-score lb-complementary"><div class="lbl">Complementary<br>Score</div></div>'
+      +'<div class="lb-score"><div class="lbl">Final<br>Score</div></div>'
+    +'</div>'
+    +ranked.map((t,i)=>{
+      const breakdown = t.readinessBreakdown || {growth:0,rotation:0,succession:0};
+      return '<div class="lb-row facilitator">'
+        +'<div class="lb-rank '+(i===0?'gold':i===1?'silver':i===2?'bronze':'')+'">'+(i+1)+'</div>'
+        +'<div class="lb-team-cell"><span class="color-dot" style="background:'+t.color+'"></span> '+esc(t.name)+(state.winnerTeamId===t.id?' 🏆':'')+'</div>'
+        +'<div class="lb-score lb-operational lb-key-value"><div class="num">'+Math.round(t.operationalPoints)+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+t.rawOperational+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+t.operational+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+Math.round(t.rawSkillGrowth)+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+breakdown.growth+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+breakdown.rotation+'</div></div>'
+        +'<div class="lb-score"><div class="num">'+breakdown.succession+'</div></div>'
+        +'<div class="lb-score lb-highlight lb-key-value"><div class="num">'+t.readiness+'</div></div>'
+        +'<div class="lb-score lb-complementary lb-key-value"><div class="num">'+t.complementary+'</div></div>'
+        +'<div class="lb-score lb-final-value"><div class="num">'+t.final+'</div></div>'
+        +'</div>';
+    }).join('')+'</div>'
     +'</div>';
 }
 
@@ -1872,12 +2205,15 @@ function renderAdminTeams(){
     +'<div class="grid grid-3">'
     +'<div class="field"><label>Session Name</label><input type="text" value="'+esc(state.session.name)+'" onchange="updateSessionField(\'name\',this.value)"></div>'
     +'<div class="field"><label>EVP → Coin Multiplier</label><input type="number" value="'+state.session.evpMultiplier+'" onchange="updateSessionField(\'evpMultiplier\',parseFloat(this.value)||1)"></div>'
+    +'<div class="field"><label>Skill Growth Benchmark (total increment)</label><div class="input-like mono">'+Math.max(0,...state.teams.map(totalSkillGrowthForTeam))+'</div><div class="dim small">Highest team total in this session = 20 readiness points</div></div>'
     +'<div class="field"><label>Number of Judges</label><input type="number" min="'+MIN_JUDGES+'" max="'+MAX_JUDGES+'" value="'+judgeCount()+'" onchange="setJudgeCount(this.value)"></div>'
     +'<div class="field"><label>Rounds</label><input type="number" min="'+MIN_ROUNDS+'" max="'+MAX_ROUNDS+'" value="'+state.session.numRounds+'" onchange="updateSessionRounds(this.value)"></div>'
     +'</div></div>'
     +'<div class="panel"><div class="panel-head"><h3>Rehearsal Data</h3><span class="hint">Facilitator only</span></div>'
     +'<p class="dim small">Reset and populate a six-team session with EVP scores, dart bonuses, complete rosters, and locked Round 1 assignments.</p>'
-    +'<button class="btn btn-cyan" onclick="seedSixTeamRehearsal()">Load Six-Team Rehearsal</button></div>'
+    +'<button class="btn btn-cyan" onclick="seedSixTeamRehearsal()">Load Six-Team Rehearsal</button>'
+    +'<button class="btn btn-green" style="margin-left:8px;" onclick="seedSixTeamThroughRound2()">Load Through Round 2</button>'
+    +'<button class="btn btn-amber" style="margin-left:8px;" onclick="seedSixTeamFullRehearsal()">Load Full 8-Round Session</button></div>'
     +'<div class="panel"><div class="panel-head"><h3>Origami Tree Challenge Settings</h3><span class="hint">Applied to every round</span></div>'
     +'<div class="grid grid-3">'
     +'<div class="field"><label>Folding time (minutes)</label><input type="number" min="1" max="60" value="'+foldingControl().minutes+'" onchange="setFoldingSetting(\'minutes\',this.value)"></div>'
@@ -2048,6 +2384,14 @@ function renderAdminScoring(){
     }).join('')
     +'</tbody></table></div>';
 
+  html += '<div class="panel"><div class="panel-head"><h3>Final-Round Complementary Scoring</h3><span class="hint">One deliberated score per team · 0–20 points</span></div>'
+    +'<p class="dim small">Enter the judges&rsquo; single agreed Complementary score after deliberation. This replaces the roster-based estimate.</p>'
+    +'<table><thead><tr><th>Team</th><th>Agreed Score / 20</th><th>Complementary</th></tr></thead><tbody>'
+    +state.teams.map(team=>'<tr><td>'+esc(team.name)+'</td>'
+      +'<td><input type="number" min="0" max="20" step="1" style="width:110px;" value="'+((team.complementaryJudgeTotals||[])[0]??'')+'" '+(state.gameClosed?'disabled':'')+' onchange="setComplementaryJudgeTotal(\''+team.id+'\',0,this.value)" aria-label="'+esc(team.name)+' agreed complementary score"></td>'
+      +'<td class="mono" id="complementaryAverage_'+team.id+'">'+team.complementary+'</td></tr>').join('')
+    +'</tbody></table></div>';
+
   html += '<div class="panel"><div class="panel-head"><h3>Round Production Results</h3><span class="hint">Operational × folding multiplier = operational + multiplier</span></div>';
   const scored = state.rounds.filter(r=>r.status==='scored');
   if(scored.length){
@@ -2129,7 +2473,7 @@ function renderAdminConsole(){
     case 'phases': body = renderAdminPhases(); break;
     case 'scoring': body = renderAdminScoring(); break;
     case 'disruptions': body = renderAdminDisruptions(); break;
-    case 'leaderboard': body = renderLeaderboardTable()+ (state.leaderboardPublished?'':'<div class="panel"><button class="btn btn-green" onclick="publishLeaderboard()">Publish to Teams</button></div>') + (state.gameClosed && !state.winnerTeamId ? '<div class="panel"><button class="btn btn-amber" onclick="declareWinner()">Declare Winner</button></div>' : ''); break;
+    case 'leaderboard': body = renderFacilitatorLeaderboardTable()+ (state.leaderboardPublished?'':'<div class="panel"><button class="btn btn-green" onclick="publishLeaderboard()">Publish to Teams</button></div>') + (state.gameClosed && !state.winnerTeamId ? '<div class="panel"><button class="btn btn-amber" onclick="declareWinner()">Declare Winner</button></div>' : ''); break;
     case 'logs': body = renderAdminLogs(); break;
     default: body = renderAdminTeams();
   }
