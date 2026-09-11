@@ -540,8 +540,6 @@ function normalizeTeamCodes(sessionState){
       if(!talent.specialty || AREAS.indexOf(talent.specialty)<0){
         talent.specialty = AREAS.reduce(function(best,area){ return talent.skills[area] > talent.skills[best] ? area : best; }, AREAS[0]);
       }
-      const strongestOther = Math.max.apply(null, AREAS.filter(function(area){ return area!==talent.specialty; }).map(function(area){ return Number(talent.skills[area])||0; }));
-      talent.skills[talent.specialty] = Math.max(Number(talent.skills[talent.specialty])||0, Math.min(88, Math.max(70, strongestOther+20)));
     }
   });
   sessionState.rounds.forEach(function(round){
@@ -764,6 +762,8 @@ function standardLearningIncrement(skill){
   return 8;
 }
 function additionalExposureIncrement(teamId, talentId, area, round, type){
+  const talent = state.talents.find(t=>t.id===talentId);
+  if(talent && talent.tier==='Gold') return 0;
   if(type==='Specialization') return 0;
   const priorSameArea = priorAssignmentsFor(teamId, talentId, round).filter(a=>a.area===area).length;
   if(priorSameArea===0) return 10;
@@ -1287,6 +1287,74 @@ function doResetSimulation(){
   toast('Simulation reset — fresh session ready.');
 }
 
+function seedSixTeamRehearsal(){
+  askConfirm(
+    'Load Six-Team Rehearsal',
+    'This resets the session and fills EVP, dart, recruitment, and Round 1 assignments for six teams. Round 1 will be locked and ready for the next stage. Continue?',
+    doSeedSixTeamRehearsal
+  );
+}
+function doSeedSixTeamRehearsal(){
+  localStorage.removeItem(STORAGE_KEY);
+  state = freshState(6, 6, state.session.numRounds);
+  state.role = {type:'facilitator'};
+  state.ui.route = 'admin';
+  state.ui.adminTab = 'phases';
+
+  const judgeScores = [
+    [82, 86, 84], [87, 82, 83], [78, 81, 81],
+    [88, 85, 87], [82, 85, 85], [89, 91, 90]
+  ];
+  state.teams.forEach(function(team, index){
+    team.evpJudgeTotals = judgeScores[index].slice();
+    team.evpScore = calculateEVPScore(team);
+    team.budget = computeStartingBudget(team.evpScore);
+  });
+  const control = evpControl();
+  control.presentationOrder = state.teams.map(function(team){ return team.id; });
+  control.presentationIndex = state.teams.length;
+  control.draftStatus = 'ended';
+  control.presentationStatus = 'ended';
+  control.dartRound.status = 'closed';
+  const dartScores = [10, 20, 0, 10, 20, 10];
+  state.teams.forEach(function(team, index){
+    team.dartBonus = dartScores[index];
+    team.budget += dartScores[index];
+    [0, 10, 20].forEach(function(score, throwIndex){
+      control.dartRound.throws[team.id+'_'+throwIndex] = throwIndex===2 ? dartScores[index] : score;
+    });
+  });
+  control.planningStatus = 'ended';
+  state.phaseStatus.evp = 'closed';
+  state.phaseStatus.marketplace = 'closed';
+
+  const gold = state.talents.filter(function(talent){ return talent.tier==='Gold'; });
+  const silver = state.talents.filter(function(talent){ return talent.tier==='Silver'; })
+    .sort(function(a,b){ return a.cost-b.cost; });
+  state.teams.forEach(function(team, teamIndex){
+    const roster = [gold[teamIndex]].concat(silver.slice(teamIndex*4, teamIndex*4+4));
+    roster.forEach(function(talent){
+      talent.recruitedBy = team.id;
+      team.budget -= talent.cost;
+      team.roster.push(talent.id);
+    });
+  });
+
+  state.session.currentRound = 1;
+  state.rounds[0].status = 'open';
+  state.teams.forEach(function(team, teamIndex){
+    const placements = {};
+    team.roster.forEach(function(talentId, areaIndex){
+      placements[AREAS[areaIndex]] = talentId;
+    });
+    commitAssignment(team, 1, placements);
+    state.rounds[0].teamSubs[team.id] = true;
+  });
+  logAction('RehearsalSeed', null, 'Six-team rehearsal populated through Round 1 assignment locks');
+  persistAndRender();
+  toast('Six-team rehearsal loaded through locked Round 1 assignments.');
+}
+
 /* ============================== AUTH / ROLE ============================== */
 
 function loginAsTeam(code){
@@ -1787,6 +1855,9 @@ function renderAdminTeams(){
     +'<div class="field"><label>Number of Judges</label><input type="number" min="'+MIN_JUDGES+'" max="'+MAX_JUDGES+'" value="'+judgeCount()+'" onchange="setJudgeCount(this.value)"></div>'
     +'<div class="field"><label>Rounds</label><input type="number" min="'+MIN_ROUNDS+'" max="'+MAX_ROUNDS+'" value="'+state.session.numRounds+'" onchange="updateSessionRounds(this.value)"></div>'
     +'</div></div>'
+    +'<div class="panel"><div class="panel-head"><h3>Rehearsal Data</h3><span class="hint">Facilitator only</span></div>'
+    +'<p class="dim small">Reset and populate a six-team session with EVP scores, dart bonuses, complete rosters, and locked Round 1 assignments.</p>'
+    +'<button class="btn btn-cyan" onclick="seedSixTeamRehearsal()">Load Six-Team Rehearsal</button></div>'
     +'<div class="panel"><div class="panel-head"><h3>Origami Tree Challenge Settings</h3><span class="hint">Applied to every round</span></div>'
     +'<div class="grid grid-3">'
     +'<div class="field"><label>Folding time (minutes)</label><input type="number" min="1" max="60" value="'+foldingControl().minutes+'" onchange="setFoldingSetting(\'minutes\',this.value)"></div>'
