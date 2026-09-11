@@ -328,6 +328,7 @@ textarea{resize:vertical;min-height:120px;}
 
 const STORAGE_KEY = 'wfsim_state_v2';
 const LOCAL_UI_KEY = 'wfsim_local_ui_v1';
+const LOCAL_DRAFT_KEY = 'wfsim_planning_drafts_v1';
 const SHARED_SESSION_ID = 'default';
 const TEAM_CODES = ['T1-ALPHA','T2-BRAVO','T3-CHARLIE','T4-DELTA','T5-ECHO','T6-FOXTROT','T7-GOLF','T8-HOTEL','T9-INDIA','T10-JULIET'];
 // Replace these values with the Firebase Web App config for the deployment.
@@ -603,7 +604,6 @@ function initSharedSync(){
         state.role = localRole;
         state.ui = localUi;
         applyingRemoteState = false;
-        window.__draft = {};
         render();
       }, function(error){
         console.error('Unable to read shared session.', error);
@@ -1254,6 +1254,7 @@ function doApplyTeamConfig(n,p){
   const keepMultiplier = state.session.evpMultiplier;
   const keepJudges = judgeCount();
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(LOCAL_DRAFT_KEY);
   state = freshState(n, p, keepRounds);
   state.session.name = keepName;
   state.session.evpMultiplier = keepMultiplier;
@@ -1275,6 +1276,7 @@ function resetSimulation(){
 function doResetSimulation(){
   const wasFacilitator = !!(state.role && state.role.type==='facilitator');
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(LOCAL_DRAFT_KEY);
   state = freshState();
   if(wasFacilitator){
     // keep the facilitator signed in against the fresh session instead of
@@ -1296,6 +1298,7 @@ function seedSixTeamRehearsal(){
 }
 function doSeedSixTeamRehearsal(){
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(LOCAL_DRAFT_KEY);
   state = freshState(6, 6, state.session.numRounds);
   state.role = {type:'facilitator'};
   state.ui.route = 'admin';
@@ -1468,9 +1471,22 @@ function validateDraftPlacements(team, placements, requireComplete){
   return { valid:true };
 }
 
-// Draft placements kept in a transient (non-persisted) object while a team is arranging,
-// so nothing commits until "Lock Assignment" is pressed.
-window.__draft = window.__draft || {};
+// Draft placements are local to the browser/team and are separate from shared locked assignments.
+window.__draft = window.__draft || loadLocalDrafts();
+function loadLocalDrafts(){
+  const raw = localStorage.getItem(LOCAL_DRAFT_KEY);
+  if(!raw) return {};
+  try{
+    const drafts = JSON.parse(raw);
+    return drafts && typeof drafts==='object' ? drafts : {};
+  }catch(error){
+    console.warn('Unable to restore planning drafts.', error);
+    return {};
+  }
+}
+function saveLocalDrafts(){
+  localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(window.__draft));
+}
 function draftFor(teamId, round){
   const key = teamId+'_'+round;
   if(!window.__draft[key]) window.__draft[key] = boardPlacementsForTeam({id:teamId}, round);
@@ -1506,6 +1522,7 @@ function onDropZone(ev, area){
     return;
   }
   window.__draft[key] = draft;
+  saveLocalDrafts();
   dragTalentId = null;
   render();
 }
@@ -1518,6 +1535,7 @@ function onDropTray(ev){
   const draft = draftFor(team.id, round);
   Object.keys(draft).forEach(a=>{ if(draft[a]===dragTalentId) delete draft[a]; });
   window.__draft[key] = draft;
+  saveLocalDrafts();
   dragTalentId = null;
   render();
 }
@@ -1537,6 +1555,8 @@ function lockPlanningBoard(){
   state.assignments = state.assignments.filter(a=>!(a.teamId===team.id && a.round===round));
   commitAssignment(team, round, draft);
   lockTeamRound(team, round);
+  delete window.__draft[key];
+  saveLocalDrafts();
 }
 
 /* ============================== RENDER: LOGIN ============================== */
